@@ -4,11 +4,11 @@ import Signup from "./Signup";
 
 const Auth_Background = () => {
   return (
-    <Box backgroundColor="grey" height="fit-content">
+    <Box backgroundColor="blue">
       <Box
         backgroundColor="#E1D7F2"
-        maxWidth="100svw"
-        height="fit-content"
+        maxWidth="100%"
+        minHeight="100%"
         margin="0 auto"
         paddingY="4rem"
         position="relative"
@@ -26,20 +26,20 @@ const Auth_Background = () => {
           src={rotation2_logo}
           boxSize="fit-content"
           objectFit="cover"
-          margin="3rem auto"
+          margin="0rem auto"
         />
-        <Flex gap="4rem">
+        <Flex gap="8rem">
           <Box
             height="385px"
             width="124px"
             backgroundColor="#9C7BD3"
-            margin="3rem 0 0 3rem"
+            margin="3rem 0 0 1rem"
           />
           <Box
             height="385px"
             width="124px"
             backgroundColor="#CEBDE9"
-            margin="10rem 0 0 0rem"
+            margin="10rem 0rem 0 0rem"
           />
         </Flex>
         <Box
@@ -54,7 +54,9 @@ const Auth_Background = () => {
         <Box
           width="80%"
           position="absolute"
-          top="50%"
+          marginTop="7rem"
+          paddingY="rem"
+          top="45%"
           left="50%"
           transform="translate(-50%, -50%)">
           <Signup />
