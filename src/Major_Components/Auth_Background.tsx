@@ -8,7 +8,7 @@ const Auth_Background = () => {
       <Box
         backgroundColor="#E1D7F2"
         maxWidth="100%"
-        minHeight="100%"
+        minHeight="100svh"
         margin="0 auto"
         paddingY="4rem"
         position="relative"
@@ -33,7 +33,7 @@ const Auth_Background = () => {
             height="385px"
             width="124px"
             backgroundColor="#9C7BD3"
-            margin="3rem 0 0 1rem"
+            margin="2rem 0 0 1rem"
           />
           <Box
             height="385px"

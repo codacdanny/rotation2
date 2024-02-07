@@ -1,5 +1,4 @@
 import {
-  Button,
   Flex,
   Heading,
   Input,
@@ -8,6 +7,7 @@ import {
   RadioGroup,
   Text,
 } from "@chakra-ui/react";
+import AuthButton from "../Minor_ Components/AuthButton";
 
 const Signup = () => {
   return (
@@ -16,7 +16,12 @@ const Signup = () => {
       flexDirection="column"
       paddingY="2rem"
       paddingX="1rem">
-      <Heading as="h3" fontSize="1.5rem" textAlign="center" marginBottom="2rem">
+      <Heading
+        as="h3"
+        fontSize="1.5rem"
+        textAlign="center"
+        marginBottom="1.5rem"
+        fontWeight="500">
         Create Accont
       </Heading>
       <Flex flexDirection="column" gap="2rem">
@@ -35,17 +40,12 @@ const Signup = () => {
         <Radio value="male">Male</Radio>
         <Radio value="female">Female </Radio>
       </RadioGroup>
-
-      <Button
-        borderRadius="30px"
-        width="fit-content"
-        margin="1rem auto"
-        padding="1rem 2.5rem"
-        backgroundColor="#6B39BD"
-        color="#F7F7F7">
-        Sign Up
-      </Button>
-      <Flex gap=".5rem" justifyContent="center" fontSize=".8rem" marginY="1rem">
+      <AuthButton buttonText="Sign Up" />
+      <Flex
+        gap=".5rem"
+        justifyContent="center"
+        fontSize=".8rem"
+        marginY=".5rem">
         <Text fontWeight="400">Already have an account?</Text>{" "}
         <Link fontWeight="100" href="#">
           Login
