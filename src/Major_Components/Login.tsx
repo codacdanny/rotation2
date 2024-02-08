@@ -35,7 +35,7 @@ const Login = () => {
         fontSize=".8rem"
         marginY=".5rem">
         <Text fontWeight="400">Don't have an account?</Text>{" "}
-        <Link fontWeight="100" href="#">
+        <Link fontWeight="100" href="/">
           Sign up
         </Link>
       </Flex>

@@ -4,10 +4,9 @@ import { ReactNode } from "react";
 
 type AuthBackgroundProps = {
   children: ReactNode;
-}
+};
 
-
-const Auth_Background: React.FC<AuthBackgroundProps> = ({children}) => {
+const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
   return (
     <Box backgroundColor="blue">
       <Box
@@ -33,14 +32,18 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({children}) => {
           objectFit="cover"
           margin="0rem auto"
         />
-        <Flex gap="8rem">
+        <Flex gap="8rem" position="relative">
           <Box
+            position="absolute"
+            left="4%"
             height="385px"
             width="124px"
             backgroundColor="#9C7BD3"
             margin="2rem 0 0 1rem"
           />
           <Box
+            position="absolute"
+            right="4%"
             height="385px"
             width="124px"
             backgroundColor="#CEBDE9"
@@ -64,7 +67,7 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({children}) => {
           top="45%"
           left="50%"
           transform="translate(-50%, -50%)">
-            {children}
+          {children}
         </Box>
       </Box>
     </Box>
