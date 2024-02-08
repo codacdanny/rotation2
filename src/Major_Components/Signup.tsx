@@ -47,7 +47,7 @@ const Signup = () => {
         fontSize=".8rem"
         marginY=".5rem">
         <Text fontWeight="400">Already have an account?</Text>{" "}
-        <Link fontWeight="100" href="/login">
+        <Link fontWeight="100" href="login">
           Login
         </Link>
       </Flex>
