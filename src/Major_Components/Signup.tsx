@@ -7,9 +7,11 @@ import {
   RadioGroup,
   Text,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import AuthButton from "../Minor_ Components/AuthButton";
 
 const Signup = () => {
+  const navigate = useNavigate();
   return (
     <Flex
       backgroundColor="#F7F7F7"
@@ -47,7 +49,7 @@ const Signup = () => {
         fontSize=".8rem"
         marginY=".5rem">
         <Text fontWeight="400">Already have an account?</Text>{" "}
-        <Link fontWeight="100" href="/login">
+        <Link fontWeight="100" onClick={() => navigate("/login")}>
           Login
         </Link>
       </Flex>
