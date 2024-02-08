@@ -1,15 +1,15 @@
 import { Box } from "@chakra-ui/react";
 import Auth_Background from "../Major_Components/Auth_Background";
-import Signup from "../Major_Components/Signup";
+import Login from "../Major_Components/Login";
 
-const SignupPage = () => {
+const LoginPage = () => {
   return (
     <Box>
       <Auth_Background>
-        <Signup/>
+        <Login />
       </Auth_Background>
     </Box>
   );
 };
 
-export default SignupPage;
+export default LoginPage;

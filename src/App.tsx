@@ -1,9 +1,9 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import Signup from "./Pages/Signup";
+import SignupPage from "./Pages/Signup";
 function App() {
   return (
     <ChakraProvider>
-      <Signup />
+      <SignupPage />
     </ChakraProvider>
   );
 }

@@ -1,8 +1,13 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
 import rotation2_logo from "../assets/Rotation2.svg";
-import Signup from "./Signup";
+import { ReactNode } from "react";
 
-const Auth_Background = () => {
+type AuthBackgroundProps = {
+  children: ReactNode;
+}
+
+
+const Auth_Background: React.FC<AuthBackgroundProps> = ({children}) => {
   return (
     <Box backgroundColor="blue">
       <Box
@@ -59,7 +64,7 @@ const Auth_Background = () => {
           top="45%"
           left="50%"
           transform="translate(-50%, -50%)">
-          <Signup />
+            {children}
         </Box>
       </Box>
     </Box>
