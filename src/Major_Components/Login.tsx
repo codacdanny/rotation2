@@ -1,5 +1,6 @@
-import { Flex, Heading, Input, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Input, Text } from "@chakra-ui/react";
 import AuthButton from "../Minor_ Components/AuthButton";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -19,13 +20,13 @@ const Login = () => {
       <Flex flexDirection="column" gap="2rem">
         <Input variant="flushed" placeholder="Email address" required />
         <Input variant="flushed" placeholder="Password" required />
-        <Link
+        <Box
           fontSize=".7rem"
           fontWeight={200}
           color="#24133F"
           textAlign="right">
-          forgot password?
-        </Link>
+          <Link to="#">forgot password?</Link>
+        </Box>
       </Flex>
 
       <AuthButton buttonText="Login" />
@@ -35,9 +36,7 @@ const Login = () => {
         fontSize=".8rem"
         marginY=".5rem">
         <Text fontWeight="400">Don't have an account?</Text>{" "}
-        <Link fontWeight="100" href="/">
-          Sign up
-        </Link>
+        <Link to="/">Sign up</Link>
       </Flex>
     </Flex>
   );
