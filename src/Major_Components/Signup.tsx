@@ -20,7 +20,7 @@ const Signup = () => {
         as="h3"
         fontSize="1.5rem"
         textAlign="center"
-        marginBottom="1.5rem"
+        marginBottom="2.5rem"
         fontWeight="500">
         Create Accont
       </Heading>

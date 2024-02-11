@@ -12,7 +12,7 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
       <Box
         backgroundColor="#E1D7F2"
         maxWidth="100%"
-        minHeight="100svh"
+        height="100vh"
         margin="0 auto"
         paddingY="4rem"
         position="relative"
