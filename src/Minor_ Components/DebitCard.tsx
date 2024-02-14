@@ -3,6 +3,7 @@ import cardBg from "../assets/cardBg.svg";
 import playButton from "../assets/play.svg";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useState } from "react";
+import PrimaryButton from "./PrimaryButton";
 
 interface CardInfoProps {
   label: string;
