@@ -28,8 +28,11 @@ const Login = () => {
           <Link to="#">forgot password?</Link>
         </Box>
       </Flex>
-
-      <AuthButton buttonText="Login" />
+      <Box textAlign="center">
+        <Link to="/dashboard">
+          <AuthButton buttonText="Login" />
+        </Link>
+      </Box>
       <Flex
         gap=".5rem"
         justifyContent="center"
