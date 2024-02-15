@@ -1,5 +1,5 @@
 import { Box, Button, Flex, IconButton, Image, Text } from "@chakra-ui/react";
-import cardBg from "../assets/cardBg.svg";
+import cardBg from "../assets/cardBg.png";
 import playButton from "../assets/play.svg";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useState } from "react";
