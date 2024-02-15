@@ -27,7 +27,7 @@ const DebitCard: React.FC = () => {
     <Box>
       <Box
         marginTop="2rem"
-        backgroundImage={`url(${cardBg})`}
+        backgroundImage={cardBg}
         height="100%"
         position="relative"
         padding="1.5rem 2rem"
