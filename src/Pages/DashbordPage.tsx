@@ -2,10 +2,11 @@ import { Box, Flex } from "@chakra-ui/react";
 import Nav from "../Minor_ Components/Nav";
 import DebitCard from "../Minor_ Components/DebitCard";
 import PrimaryButton from "../Minor_ Components/PrimaryButton";
+import Transactiions from "../Major_Components/Transactiions";
 
 const DashbordPage = () => {
   return (
-    <Box backgroundColor="#F7F7F7" height="100%">
+    <Box backgroundColor="#F7F7F7" height="100%" padding=".7rem">
       <Nav />
       <DebitCard />
       <Flex marginY="2rem" paddingX="2rem" justifyContent="space-evenly">
@@ -25,6 +26,7 @@ const DashbordPage = () => {
           buttonText="50"
         />
       </Flex>
+      <Transactiions />
     </Box>
   );
 };

@@ -4,13 +4,20 @@ import notification from "../assets/notification.svg";
 const Nav = () => {
   return (
     <Box as="nav">
-      <HStack width="100svw">
+      <HStack width="100%">
         <Flex width="100%" justifyContent="space-between">
           <Flex gap="1rem">
             <Image src={profilePic} alt="profile picture" />
             <Flex flexDirection="column" textAlign="justify">
-              <Text>User1343</Text>
-              <Text>Go to profile</Text>
+              <Text color="#24133F" fontWeight="500" fontSize="1.5rem">
+                User1343
+              </Text>
+              <Text
+                color="rgba(36, 19, 63, 0.70)"
+                fontSize="1rem"
+                fontWeight="300">
+                Go to profile
+              </Text>
             </Flex>
           </Flex>
           <Image src={notification} alt="notification" />
