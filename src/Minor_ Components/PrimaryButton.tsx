@@ -13,7 +13,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 }) => {
   return (
     <Button
-      fontWeight={300}
+      fontWeight={400}
       variant="ghost"
       outline="1px solid rgba(36, 19, 63, 0.50)"
       color={textColor}
