@@ -3,6 +3,7 @@ import cardBg from "../assets/cardBg.png";
 import playButton from "../assets/play.svg";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 interface CardInfoProps {
   label: string;
@@ -33,15 +34,17 @@ const DebitCard: React.FC = () => {
         padding="1.5rem 2rem"
         color="#F7F7F7">
         <Text fontWeight={300}>Name On the Card</Text>
-        <Button
-          as="a"
-          variant="ghost"
-          colorScheme="transparent"
-          position="absolute"
-          right="0%"
-          top="30%">
-          <Image src={playButton} alt="play button" />
-        </Button>
+        <Link to="/pickpage">
+          <Button
+            as="a"
+            variant="ghost"
+            colorScheme="transparent"
+            position="absolute"
+            right="0%"
+            top="30%">
+            <Image src={playButton} alt="play button" />
+          </Button>
+        </Link>
 
         <Flex marginTop="4rem" gap="2rem" alignItems="center">
           <Text fontWeight={600} fontSize="2rem">
