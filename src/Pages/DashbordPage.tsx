@@ -1,7 +1,7 @@
 import { Box, Flex } from "@chakra-ui/react";
-import Nav from "../Minor_ Components/Nav";
-import DebitCard from "../Minor_ Components/DebitCard";
-import PrimaryButton from "../Minor_ Components/PrimaryButton";
+import Nav from "../Minor_Components/Nav";
+import DebitCard from "../Minor_Components/DebitCard";
+import PrimaryButton from "../Minor_Components/PrimaryButton";
 import Transactiions from "../Major_Components/Transactiions";
 
 const DashbordPage = () => {

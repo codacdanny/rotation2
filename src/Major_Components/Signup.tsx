@@ -7,7 +7,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import AuthButton from "../Minor_ Components/AuthButton";
+import AuthButton from "../Minor_Components/AuthButton";
 
 const Signup = () => {
   return (
