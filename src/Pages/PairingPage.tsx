@@ -9,14 +9,18 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { AiOutlineLeft } from "react-icons/ai";
+import { BsArrowRight } from "react-icons/bs";
 import user from "../assets/user.svg";
 import setting from "../assets/setting-2.svg";
 import favourite from "../assets/star.svg";
 import notification from "../assets/notification-bing.svg";
+import User from "../Minor_Components/User";
 
 const WelcomeSection: React.FC = () => (
-  <Flex flexDirection="column" color="#24133F" alignItems="center" gap="2rem">
-    <Heading textAlign="center">Welcome to the grand experience</Heading>
+  <Flex flexDirection="column" color="#24133F" alignItems="center">
+    <Heading textAlign="center">
+      Please be patient while you we pick an opponent for you
+    </Heading>
   </Flex>
 );
 
@@ -59,7 +63,21 @@ const IconButtonSection: React.FC<{ icon: string; alt: string }> = ({
   </Button>
 );
 const PairingPage = () => {
-  return <Box></Box>;
+  return (
+    <Box
+      paddingY="2rem"
+      paddingX="1rem"
+      height="100%"
+      bgGradient="linear-gradient(180deg, #E1D7F2 0%, rgba(107, 57, 189, 0.20) 53.96%, rgba(225, 215, 242, 0.00) 100%)">
+      <WelcomeSection />
+      <CircularProgressSection />
+      <Flex>
+        <User />
+        <BsArrowRight />
+        <User />
+      </Flex>
+    </Box>
+  );
 };
 
 export default PairingPage;

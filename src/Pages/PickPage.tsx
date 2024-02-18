@@ -10,12 +10,12 @@ import {
 } from "@chakra-ui/react";
 import { AiOutlineLeft } from "react-icons/ai";
 
-import headshot from "../assets/bigProfileImage.svg";
 import PrimaryButton from "../Minor_Components/PrimaryButton";
 import user from "../assets/user.svg";
 import setting from "../assets/setting-2.svg";
 import favourite from "../assets/star.svg";
 import notification from "../assets/notification-bing.svg";
+import User from "../Minor_Components/User";
 
 const WelcomeSection: React.FC = () => (
   <Flex flexDirection="column" color="#24133F" alignItems="center" gap="2rem">
@@ -23,7 +23,7 @@ const WelcomeSection: React.FC = () => (
     <Text fontSize="1.5rem" color="#24133F">
       Let's Play
     </Text>
-    <Image src={headshot} alt="headshot" boxSize="150px" />
+    <User />
     <Text fontSize="2.5rem" color="#24133F">
       Bal: N2000
     </Text>
