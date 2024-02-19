@@ -1,4 +1,5 @@
 import {
+  Box,
   Flex,
   Heading,
   Input,
@@ -40,9 +41,11 @@ const Signup = () => {
         <Radio value="male">Male</Radio>
         <Radio value="female">Female </Radio>
       </RadioGroup>
-      <Link to="/dashboard">
-        <AuthButton buttonText="Sign Up" />
-      </Link>
+      <Box textAlign="center">
+        <Link to="/dashboard">
+          <AuthButton buttonText="Sign Up" />
+        </Link>
+      </Box>
       <Flex
         gap=".5rem"
         justifyContent="center"
