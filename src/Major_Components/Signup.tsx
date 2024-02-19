@@ -40,7 +40,9 @@ const Signup = () => {
         <Radio value="male">Male</Radio>
         <Radio value="female">Female </Radio>
       </RadioGroup>
-      <AuthButton buttonText="Sign Up" />
+      <Link to="/dashboard">
+        <AuthButton buttonText="Sign Up" />
+      </Link>
       <Flex
         gap=".5rem"
         justifyContent="center"
