@@ -7,6 +7,7 @@ import {
   Heading,
   Image,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import { AiOutlineLeft } from "react-icons/ai";
 import { BsArrowRight } from "react-icons/bs";
@@ -70,12 +71,33 @@ const PairingPage = () => {
       height="100%"
       bgGradient="linear-gradient(180deg, #E1D7F2 0%, rgba(107, 57, 189, 0.20) 53.96%, rgba(225, 215, 242, 0.00) 100%)">
       <WelcomeSection />
-      <CircularProgressSection />
-      <Flex>
+      <Flex justifyContent="center" marginY="2rem">
+        <CircularProgressSection />
+      </Flex>
+      <Flex gap=".5rem" alignItems="center">
         <User />
-        <BsArrowRight />
+        <BsArrowRight size="30px" />
         <User />
       </Flex>
+      <VStack gap="2rem" marginY="2rem">
+        <Text>Please Wait...</Text>
+
+        <Text textAlign="center" fontWeight="500">
+          Your game with User22a7 begins in{" "}
+          <span
+            style={{
+              color: "#06BCC1",
+            }}>
+            20
+          </span>
+          seconds
+        </Text>
+        <Text textAlign="center" fontWeight="300" fontSize=".8rem">
+          Do kindly note that any player who fails to start the game at the end
+          of the timer loses the game
+        </Text>
+      </VStack>
+      <FlexSection />
     </Box>
   );
 };
