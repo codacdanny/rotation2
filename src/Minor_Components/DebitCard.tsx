@@ -36,6 +36,9 @@ const DebitCard: React.FC = () => {
         <Text fontWeight={300}>Name On the Card</Text>
         <Link to="/pickpage">
           <Button
+            display="flex"
+            flexDirection="column"
+            marginY="1rem"
             as="a"
             variant="ghost"
             colorScheme="transparent"
@@ -43,6 +46,7 @@ const DebitCard: React.FC = () => {
             right="0%"
             top="30%">
             <Image src={playButton} alt="play button" />
+            <Text>Play</Text>
           </Button>
         </Link>
 
