@@ -89,7 +89,7 @@ const PairingPage = () => {
               color: "#06BCC1",
             }}>
             20
-          </span>
+          </span>{" "}
           seconds
         </Text>
         <Text textAlign="center" fontWeight="300" fontSize=".8rem">
