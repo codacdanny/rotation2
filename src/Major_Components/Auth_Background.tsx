@@ -1,5 +1,5 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
-import rotation2_logo from "../assets/Rotation2.svg";
+import rotation2_logo from "../assets/Rotation2.png";
 import { ReactNode } from "react";
 
 type AuthBackgroundProps = {
@@ -12,7 +12,7 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
       <Box
         backgroundColor="#E1D7F2"
         maxWidth="100%"
-        height="100vh"
+        height="115svh"
         margin="0 auto"
         paddingY="4rem"
         position="relative"
@@ -29,6 +29,7 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
         <Image
           src={rotation2_logo}
           boxSize="fit-content"
+          height="10rem"
           objectFit="cover"
           margin="0rem auto"
         />

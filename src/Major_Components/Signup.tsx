@@ -15,7 +15,8 @@ const Signup = () => {
       backgroundColor="#F7F7F7"
       flexDirection="column"
       paddingY="2rem"
-      paddingX="1rem">
+      paddingX="1rem"
+      marginTop="5rem">
       <Heading
         as="h3"
         fontSize="1.5rem"
