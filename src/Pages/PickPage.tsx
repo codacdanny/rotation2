@@ -46,10 +46,10 @@ const FlexSection: React.FC = () => (
       alignItems="left"
       gap="1rem"
       marginLeft="-1rem">
-      <IconButtonSection icon={user} alt="headshot" />
-      <IconButtonSection icon={setting} alt="headshot" />
-      <IconButtonSection icon={favourite} alt="headshot" />
-      <IconButtonSection icon={notification} alt="headshot" />
+      <IconButtonSection icon={user} alt="profile" />
+      <IconButtonSection icon={setting} alt="setting" />
+      <IconButtonSection icon={favourite} alt="favourites" />
+      <IconButtonSection icon={notification} alt="notification" />
     </Flex>
     <Flex alignItems="end" fontWeight="600" color="#24133F">
       <AiOutlineLeft size="20px" />
@@ -62,9 +62,11 @@ const IconButtonSection: React.FC<{ icon: string; alt: string }> = ({
   icon,
   alt,
 }) => (
-  <Button variant="ghost" colorScheme="transparent">
-    <Image src={icon} alt={alt} boxSize="30px" />
-  </Button>
+  <Link to="/profile">
+    <Button variant="ghost" colorScheme="transparent">
+      <Image src={icon} alt={alt} boxSize="30px" />
+    </Button>
+  </Link>
 );
 
 const PickPage: React.FC = () => {

@@ -18,7 +18,7 @@ import notification from "../assets/notification-bing.svg";
 import User from "../Minor_Components/User";
 
 const WelcomeSection: React.FC = () => (
-  <Flex flexDirection="column" color="#24133F" alignItems="center">
+  <Flex flexDirection="column" alignItems="center">
     <Heading textAlign="center">
       Please be patient while you we pick an opponent for you
     </Heading>

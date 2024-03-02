@@ -1,18 +1,18 @@
-import { Box, Flex, Image } from "@chakra-ui/react";
-import rotation2_logo from "../assets/Rotation2.png";
+import { Box } from "@chakra-ui/react";
+
 import { ReactNode } from "react";
 
-type AuthBackgroundProps = {
+type PageBackgroundProps = {
   children: ReactNode;
 };
 
-const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
+const Page_Backround: React.FC<PageBackgroundProps> = ({ children }) => {
   return (
     <Box>
       <Box
         backgroundColor="#E1D7F2"
         maxWidth="100%"
-        height="115svh"
+        height="100svh"
         margin="0 auto"
         paddingY="4rem"
         position="relative"
@@ -26,31 +26,7 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
           right="-7%"
           top="-3%"
         />
-        <Image
-          src={rotation2_logo}
-          boxSize="fit-content"
-          height="10rem"
-          objectFit="cover"
-          margin="0rem auto"
-        />
-        <Flex gap="8rem" position="relative">
-          <Box
-            position="absolute"
-            left="4%"
-            height="385px"
-            width="124px"
-            backgroundColor="#9C7BD3"
-            margin="-1rem 0 0 1rem"
-          />
-          <Box
-            position="absolute"
-            right="4%"
-            height="385px"
-            width="124px"
-            backgroundColor="#CEBDE9"
-            margin="10rem 0rem 0 0rem"
-          />
-        </Flex>
+
         <Box
           backgroundColor="#CEBDE9"
           height="100px"
@@ -75,4 +51,4 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
   );
 };
 
-export default Auth_Background;
+export default Page_Backround;
