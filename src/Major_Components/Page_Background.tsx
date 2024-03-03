@@ -23,8 +23,8 @@ const Page_Backround: React.FC<PageBackgroundProps> = ({ children }) => {
           width="100px"
           borderRadius="50%"
           position="absolute"
-          right="-7%"
-          top="-3%"
+          right="-10%"
+          top="-7%"
         />
 
         <Box
@@ -36,14 +36,7 @@ const Page_Backround: React.FC<PageBackgroundProps> = ({ children }) => {
           left="-10%"
           bottom="-5%"
         />
-        <Box
-          width="80%"
-          position="absolute"
-          marginTop="7rem"
-          paddingY="rem"
-          top="45%"
-          left="50%"
-          transform="translate(-50%, -50%)">
+        <Box width="90%" margin="0 auto">
           {children}
         </Box>
       </Box>

@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import Page_Backround from "../Major_Components/Page_Background";
 import profile from "../assets/profileImage.svg";
 
@@ -11,7 +11,7 @@ const ProfilePage = () => {
           textAlign="center"
           color="#24133F"
           flexDirection="column"
-          gap="1rem">
+          gap=".7rem">
           <Heading fontSize="1.5rem">Profile</Heading>
           <Image
             src={profile}
@@ -23,37 +23,51 @@ const ProfilePage = () => {
           <Heading fontSize="2rem"> UserID </Heading>
           <Text>Highest level Attained: level 3</Text>
         </Flex>
-        <Flex flexDirection="column">
-          <Flex
-            flexDirection="column"
-            backgroundColor="#CEBDE9"
-            padding=".5rem 1rem"
-            borderRadius="6px">
-            <Text>Email Address</Text>
+        <Flex flexDirection="column" gap="1rem" marginY="2rem">
+          <Flex flexDirection="column">
+            <Text fontSize=".8rem">Email Address</Text>
             <Text> fetchemail@gmail.com </Text>
           </Flex>
           <Flex flexDirection="column">
-            <Text>Username</Text>
+            <Text fontSize=".8rem" fontWeight="300">
+              Username
+            </Text>
             <Text>Fetch username</Text>
           </Flex>
           <Flex flexDirection="column">
-            <Text>Account Name</Text>
+            <Text fontSize=".8rem" fontWeight="300">
+              Account Name
+            </Text>
             <Text>Fetch Account Name</Text>
           </Flex>
           <Flex flexDirection="column">
-            <Text>Account Number</Text>
+            <Text fontSize=".8rem" fontWeight="300">
+              Account Number
+            </Text>
             <Text>Fetch Account Number</Text>
           </Flex>
           <Flex flexDirection="column">
-            <Text>Delete Account</Text>
-            <Text>Delete your rotation 2 account</Text>
+            <Text color="#F44336">Delete Account</Text>
+            <Text fontSize=".8rem" fontWeight="300">
+              Delete your rotation 2 account
+            </Text>
           </Flex>
           <Flex flexDirection="column">
-            <Text>Restrict account</Text>
-            <Text>Stop transactions in emergency situations</Text>
+            <Text color="#F44336">Restrict account</Text>
+            <Text fontSize=".8rem" fontWeight="300">
+              Stop transactions in emergency situations
+            </Text>
           </Flex>
         </Flex>
-        <Button>Logout</Button>
+        <Box>
+          <Button
+            variant="link"
+            colorScheme="transparent"
+            color="#24133F"
+            textAlign="left">
+            Logout
+          </Button>
+        </Box>
       </Flex>
     </Page_Backround>
   );
