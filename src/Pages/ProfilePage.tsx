@@ -3,6 +3,18 @@ import Page_Backround from "../Major_Components/Page_Background";
 import profile from "../assets/profileImage.svg";
 
 const ProfilePage = () => {
+  const profileDetails = [
+    { label: "Email Address", value: "fetchemail@gmail.com" },
+    { label: "Username", value: "Fetch username" },
+    { label: "Account Name", value: "Fetch Account Name" },
+    { label: "Account Number", value: "Fetch Account Number" },
+  ];
+
+  const profileActions = [
+    { label: "Delete Account", value: "Delete your rotation 2 account" },
+    { label: "Restrict account", value: "Stop transactions in emergency situations" },
+  ];
+
   return (
     <Page_Backround>
       <Flex color="#24133F" flexDirection="column">
@@ -24,40 +36,18 @@ const ProfilePage = () => {
           <Text>Highest level Attained: level 3</Text>
         </Flex>
         <Flex flexDirection="column" gap="1rem" marginY="2rem">
-          <Flex flexDirection="column">
-            <Text fontSize=".8rem">Email Address</Text>
-            <Text> fetchemail@gmail.com </Text>
-          </Flex>
-          <Flex flexDirection="column">
-            <Text fontSize=".8rem" fontWeight="300">
-              Username
-            </Text>
-            <Text>Fetch username</Text>
-          </Flex>
-          <Flex flexDirection="column">
-            <Text fontSize=".8rem" fontWeight="300">
-              Account Name
-            </Text>
-            <Text>Fetch Account Name</Text>
-          </Flex>
-          <Flex flexDirection="column">
-            <Text fontSize=".8rem" fontWeight="300">
-              Account Number
-            </Text>
-            <Text>Fetch Account Number</Text>
-          </Flex>
-          <Flex flexDirection="column">
-            <Text color="#F44336">Delete Account</Text>
-            <Text fontSize=".8rem" fontWeight="300">
-              Delete your rotation 2 account
-            </Text>
-          </Flex>
-          <Flex flexDirection="column">
-            <Text color="#F44336">Restrict account</Text>
-            <Text fontSize=".8rem" fontWeight="300">
-              Stop transactions in emergency situations
-            </Text>
-          </Flex>
+          {profileDetails.map((detail) => (
+            <Flex key={detail.label} flexDirection="column">
+              <Text fontSize=".8rem">{detail.label}</Text>
+              <Text>{detail.value}</Text>
+            </Flex>
+          ))}
+          {profileActions.map((action) => (
+            <Flex key={action.label} flexDirection="column">
+              <Text color="#F44336">{action.label}</Text>
+              <Text fontSize=".8rem" fontWeight="300">{action.value}</Text>
+            </Flex>
+          ))}
         </Flex>
         <Box>
           <Button
