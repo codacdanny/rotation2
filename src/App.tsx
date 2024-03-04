@@ -6,6 +6,7 @@ import DashbordPage from "./Pages/DashbordPage";
 import PickPage from "./Pages/PickPage";
 import PairingPage from "./Pages/PairingPage";
 import ProfilePage from "./Pages/ProfilePage";
+import GameRoom from "./Pages/GameRoom";
 function App() {
   return (
     <>
@@ -16,6 +17,7 @@ function App() {
         <Route path="pickpage" element={<PickPage />} />
         <Route path="pair" element={<PairingPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="game" element={<GameRoom />} />
       </Routes>
     </>
   );

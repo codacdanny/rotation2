@@ -12,7 +12,10 @@ const ProfilePage = () => {
 
   const profileActions = [
     { label: "Delete Account", value: "Delete your rotation 2 account" },
-    { label: "Restrict account", value: "Stop transactions in emergency situations" },
+    {
+      label: "Restrict account",
+      value: "Stop transactions in emergency situations",
+    },
   ];
 
   return (
@@ -45,7 +48,9 @@ const ProfilePage = () => {
           {profileActions.map((action) => (
             <Flex key={action.label} flexDirection="column">
               <Text color="#F44336">{action.label}</Text>
-              <Text fontSize=".8rem" fontWeight="300">{action.value}</Text>
+              <Text fontSize=".8rem" fontWeight="300">
+                {action.value}
+              </Text>
             </Flex>
           ))}
         </Flex>
