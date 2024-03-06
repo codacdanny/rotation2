@@ -1,19 +1,45 @@
-import { useEffect, useState } from "react";
-
-import { Flex, Box, Text, Image, Button } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { Flex, Text, Image, Button } from "@chakra-ui/react";
 import one from "../assets/1.svg";
 import two from "../assets/2.svg";
 import three from "../assets/3.svg";
 import four from "../assets/4.svg";
-import five from "../assets/5.svg";
-import seven from "../assets/7.svg";
-import eight from "../assets/8.svg";
-import ten from "../assets/10.svg";
-import eleven from "../assets/11.svg";
+import five from "../assets/40.svg";
+import six from "../assets/7.svg";
+import seven from "../assets/8.svg";
+import eight from "../assets/9.svg";
+import nine from "../assets/170.svg";
+import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
+
+type Card = {
+  image: string;
+  value: number;
+};
+
+const cardImages: Card[] = [
+  { image: one, value: 10 },
+  { image: two, value: 2 },
+  { image: three, value: 3 },
+  { image: four, value: 140 },
+  { image: five, value: 40 },
+  { image: six, value: 70 },
+  { image: seven, value: 80 },
+  { image: eight, value: 50 },
+  { image: nine, value: 170 },
+  { image: ten, value: 160 },
+];
+
+type UserCards = Card[];
+type Sum = number;
 
 const GameRoom: React.FC = () => {
   const [landscapeMode, setLandscapeMode] = useState<boolean>(false);
+  const [user1Cards, setUser1Cards] = useState<UserCards>([]);
+  const [user2Cards, setUser2Cards] = useState<UserCards>([]);
+  const [user1Sum, setUser1Sum] = useState<Sum>(0);
+  const [user2Sum, setUser2Sum] = useState<Sum>(0);
+  const [currentUser, setCurrentUser] = useState<number>(1);
 
   useEffect(() => {
     const handleOrientationChange = () => {
@@ -21,7 +47,7 @@ const GameRoom: React.FC = () => {
       setLandscapeMode(isLandscape);
     };
 
-    handleOrientationChange(); // Check orientation on initial render
+    handleOrientationChange();
     window.addEventListener("orientationchange", handleOrientationChange);
 
     return () => {
@@ -29,99 +55,102 @@ const GameRoom: React.FC = () => {
     };
   }, []);
 
+  const handlePickCard = () => {
+    const randomCardIndex = Math.floor(Math.random() * cardImages.length);
+    const pickedCard = cardImages[randomCardIndex];
+
+    if (currentUser === 1) {
+      setUser1Cards([...user1Cards, pickedCard]);
+      setUser1Sum(user1Sum + pickedCard.value);
+      setCurrentUser(2);
+    } else {
+      setUser2Cards([...user2Cards, pickedCard]);
+      setUser2Sum(user2Sum + pickedCard.value);
+      setCurrentUser(1);
+    }
+  };
+
   return (
     <Flex
       direction={landscapeMode ? "column" : "column"}
       backgroundColor="rgba(107, 57, 189, .65)"
-      height="100svh"
+      height="100vh"
       padding="1.5rem 1rem"
       justifyContent="space-between"
       width="100%">
       <Flex alignItems="start" justifyContent="space-evenly">
-        <Image src={one} alt="card" />
-        <Image src={two} alt="card" />
-        <Image src={three} alt="card" />
-        <Image src={four} alt="card" />
-        <Image src={five} alt="card" />
-        <Image src={seven} alt="card" />
-        <Image src={eight} alt="card" />
-        <Image src={ten} alt="card" />
-        <Image src={eleven} alt="card" />
+        {cardImages.map((card, index) => (
+          <Image
+            key={index}
+            height="6rem"
+            src={card.image}
+            alt={`Card ${index + 1}`}
+          />
+        ))}
       </Flex>
+
       <Flex flexDirection="column" gap="1rem">
         <Flex justifyContent="space-between" width="100%">
-          <Text
-            fontWeight={500}
-            fontSize="1.3rem"
-            backgroundColor="#CEC0E2"
-            padding="1rem"
-            borderRadius="50% 50% 50% 50% / 60% 60% 30% 40%">
-            50
-          </Text>
-          <Text
-            fontWeight={500}
-            fontSize="1.3rem"
-            backgroundColor="#CEC0E2"
-            padding="1rem"
-            borderRadius="50% 50% 50% 50% / 60% 60% 30% 40%">
-            120
-          </Text>
+          <TextSumBox sum={user1Sum} />
+          <TextSumBox sum={user2Sum} />
         </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Flex width="40%" gap=".5rem" alignItems="center">
-            <Flex flexDirection="column" gap=".2rem">
-              <Image src={profile} height="4rem" alt="user Image" />
-              <Text>User1234</Text>
-            </Flex>
-            <Flex overflowX="scroll">
-              <Image src={one} alt="card" />
-              <Image src={two} alt="card" />
-              <Image src={three} alt="card" />
-              <Image src={four} alt="card" />
-              <Image src={five} alt="card" />
-              <Image src={seven} alt="card" />
-              <Image src={eight} alt="card" />
-            </Flex>
-          </Flex>
-          <Box width="30%" textAlign="center">
-            <Button
-              borderRadius="6px"
-              width="fit-content"
-              margin="1rem auto"
-              padding="1rem 2.5rem"
-              backgroundColor="#6B39BD"
-              color="#F7F7F7"
-              onClick={() => {}}
-              _hover={{
-                backgroundColor: "#6B39BD",
-              }}
-              _active={{
-                transform: "scale(1.05)",
-                transition: "all .2s ease-in-out",
-              }}>
-              Pick
-            </Button>
-          </Box>
 
-          <Flex width="40%" gap=".5rem" alignItems="center">
-            <Flex flexDirection="column" gap=".2rem">
-              <Image src={profile} height="4rem" alt="user Image" />
-              <Text>User1234</Text>
-            </Flex>
-            <Flex overflowX="scroll">
-              <Image src={one} alt="card" />
-              <Image src={two} alt="card" />
-              <Image src={three} alt="card" />
-              <Image src={four} alt="card" />
-              <Image src={five} alt="card" />
-              <Image src={seven} alt="card" />
-              <Image src={eight} alt="card" />
-            </Flex>
-          </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <UserBox profile={profile} cards={user1Cards} name="User1" />
+          <Button
+            onClick={handlePickCard}
+            borderRadius="6px"
+            width="fit-content"
+            margin="1rem auto"
+            padding="1rem 2.5rem"
+            backgroundColor="#6B39BD"
+            color="#F7F7F7"
+            _hover={{ backgroundColor: "#6B39BD" }}
+            _active={{
+              transform: "scale(1.05)",
+              transition: "all .2s ease-in-out",
+            }}>
+            Pick
+          </Button>
+          <UserBox profile={profile} cards={user2Cards} name="User2" />
         </Flex>
       </Flex>
     </Flex>
   );
 };
+
+const TextSumBox: React.FC<{ sum: Sum }> = ({ sum }) => (
+  <Text
+    fontWeight={500}
+    fontSize="1.3rem"
+    backgroundColor="#CEC0E2"
+    padding=".5rem"
+    borderRadius="50% 50% 50% 50% / 60% 60% 30% 40%">
+    {sum}
+  </Text>
+);
+
+const UserBox: React.FC<{
+  profile: string;
+  cards: UserCards;
+  name: string;
+}> = ({ profile, cards, name }) => (
+  <Flex width="40%" gap=".5rem" alignItems="center">
+    <Flex flexDirection="column" gap=".2rem">
+      <Image src={profile} height="4rem" alt={`${name}'s Image`} />
+      <Text>{name}</Text>
+    </Flex>
+    <Flex overflowX="scroll" gap=".2rem">
+      {cards.map((card, index) => (
+        <Image
+          key={index}
+          src={card.image}
+          alt={`Card ${index + 1}`}
+          height="6rem"
+        />
+      ))}
+    </Flex>
+  </Flex>
+);
 
 export default GameRoom;
