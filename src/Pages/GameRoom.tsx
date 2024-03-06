@@ -107,7 +107,7 @@ const GameRoom: React.FC = () => {
       <Flex
         direction={landscapeMode ? "column" : "column"}
         backgroundColor="rgba(107, 57, 189, .65)"
-        height="100vh"
+        height="100svh"
         padding="1.5rem 1rem"
         justifyContent="space-between"
         width="100%">
