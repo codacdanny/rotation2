@@ -72,7 +72,7 @@ const GameRoom: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (user1Cards.length === MAX_CARDS || user2Cards.length === MAX_CARDS) {
+    if (user1Cards.length === MAX_CARDS && user2Cards.length === MAX_CARDS) {
       onOpen();
     }
   }, [user1Cards, user2Cards, onOpen]);
@@ -107,7 +107,7 @@ const GameRoom: React.FC = () => {
       <Flex
         direction={landscapeMode ? "column" : "column"}
         backgroundColor="rgba(107, 57, 189, .65)"
-        height="100svh"
+        height="100vh"
         padding="1.5rem 1rem"
         justifyContent="space-between"
         width="100%">
