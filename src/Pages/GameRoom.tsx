@@ -24,6 +24,7 @@ import eight from "../assets/9.svg";
 import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
+import back from "../assets/back.svg";
 
 type Card = {
   image: string;
@@ -54,6 +55,7 @@ const GameRoom: React.FC = () => {
   const [user2Cards, setUser2Cards] = useState<UserCards>([]);
   const [user1Sum, setUser1Sum] = useState<Sum>(0);
   const [user2Sum, setUser2Sum] = useState<Sum>(0);
+  const [pickedCards, setPickedCards] = useState<string[]>([]);
   const [currentUser, setCurrentUser] = useState<number>(1);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -91,14 +93,19 @@ const GameRoom: React.FC = () => {
       return;
     }
 
-    if (currentUser === 1) {
-      setUser1Cards([...user1Cards, card]);
-      setUser1Sum(user1Sum + card.value);
-      setCurrentUser(2);
-    } else {
-      setUser2Cards([...user2Cards, card]);
-      setUser2Sum(user2Sum + card.value);
-      setCurrentUser(1);
+    if (!pickedCards.includes(card.image)) {
+      const updatedPickedCards = [...pickedCards, card.image];
+      setPickedCards(updatedPickedCards);
+
+      if (currentUser === 1) {
+        setUser1Cards([...user1Cards, card]);
+        setUser1Sum(user1Sum + card.value);
+        setCurrentUser(2);
+      } else {
+        setUser2Cards([...user2Cards, card]);
+        setUser2Sum(user2Sum + card.value);
+        setCurrentUser(1);
+      }
     }
   };
 
@@ -123,6 +130,7 @@ const GameRoom: React.FC = () => {
                 key={index}
                 card={card}
                 onClick={() => handlePickCard(card)}
+                picked={pickedCards.includes(card.image)}
               />
             ))}
         </Flex>
@@ -149,18 +157,18 @@ const GameRoom: React.FC = () => {
   );
 };
 
-const ClickableCard: React.FC<{ card: Card; onClick: () => void }> = ({
-  card,
-  onClick,
-}) => (
+const ClickableCard: React.FC<{
+  card: Card;
+  onClick: () => void;
+  picked: boolean;
+}> = ({ card, onClick, picked }) => (
   <Image
     onClick={onClick}
     height="6rem"
-    src={card.image}
+    src={picked ? card.image : back}
     alt={`Card ${card.value}`}
   />
 );
-
 const TextSumBox: React.FC<{ sum: Sum }> = ({ sum }) => (
   <Text
     fontWeight={500}
