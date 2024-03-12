@@ -43,6 +43,15 @@ const cardImages: Card[] = [
   { image: nine, value: 170 },
   { image: ten, value: 160 },
 ];
+const shuffleArray = (array: any[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
+const shuffledCardImages = shuffleArray(cardImages);
 
 type UserCards = Card[];
 type Sum = number;
@@ -119,7 +128,7 @@ const GameRoom: React.FC = () => {
         justifyContent="space-between"
         width="100%">
         <Flex alignItems="start" justifyContent="space-evenly" wrap="wrap">
-          {cardImages
+          {shuffledCardImages
             .filter(
               (card) =>
                 !user1Cards.some((userCard) => userCard.image === card.image) &&
