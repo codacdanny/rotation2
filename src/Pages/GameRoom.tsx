@@ -12,6 +12,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Box,
 } from "@chakra-ui/react";
 import one from "../assets/1.svg";
 import two from "../assets/2.svg";
@@ -25,6 +26,7 @@ import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
+import Countdown from "react-countdown";
 
 type Card = {
   image: string;
@@ -57,30 +59,20 @@ type UserCards = Card[];
 type Sum = number;
 
 const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
+const GAME_DURATION = 50000;
+const TURN_DURATION = 5000; // 5 seconds
 
 const GameRoom: React.FC = () => {
-  const [landscapeMode, setLandscapeMode] = useState<boolean>(false);
   const [user1Cards, setUser1Cards] = useState<UserCards>([]);
   const [user2Cards, setUser2Cards] = useState<UserCards>([]);
   const [user1Sum, setUser1Sum] = useState<Sum>(0);
   const [user2Sum, setUser2Sum] = useState<Sum>(0);
   const [pickedCards, setPickedCards] = useState<string[]>([]);
   const [currentUser, setCurrentUser] = useState<number>(1);
+  const [user1Timer, setUser1Timer] = useState<boolean>(false);
+  const [user2Timer, setUser2Timer] = useState<boolean>(false);
+  const [startTime, setStartTime] = useState<number>(Date.now());
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  useEffect(() => {
-    const handleOrientationChange = () => {
-      const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-      setLandscapeMode(isLandscape);
-    };
-
-    handleOrientationChange();
-    window.addEventListener("orientationchange", handleOrientationChange);
-
-    return () => {
-      window.removeEventListener("orientationchange", handleOrientationChange);
-    };
-  }, []);
 
   useEffect(() => {
     if (
@@ -110,18 +102,27 @@ const GameRoom: React.FC = () => {
         setUser1Cards([...user1Cards, card]);
         setUser1Sum(user1Sum + card.value);
         setCurrentUser(2);
+        setUser1Timer(false);
+        setUser2Timer(true);
       } else {
         setUser2Cards([...user2Cards, card]);
         setUser2Sum(user2Sum + card.value);
         setCurrentUser(1);
+        setUser2Timer(false);
+        setUser1Timer(true);
       }
     }
+  };
+
+  const handleGameEnd = () => {
+    // Perform actions to end the game (e.g., declare a winner)
+    console.log("Game Over!");
   };
 
   return (
     <>
       <Flex
-        direction={landscapeMode ? "column" : "column"}
+        flexDirection="column"
         backgroundColor="rgba(107, 57, 189, .65)"
         height="100vh"
         padding="1.5rem 1rem"
@@ -146,12 +147,46 @@ const GameRoom: React.FC = () => {
 
         <Flex flexDirection="column" gap="1rem">
           <Flex justifyContent="space-between" width="100%">
-            <TextSumBox sum={user1Sum} />
-            <TextSumBox sum={user2Sum} />
+            <Flex gap=".5rem">
+              <TextSumBox sum={user1Sum} />
+              {user1Timer && (
+                <Countdown
+                  date={Date.now() + TURN_DURATION}
+                  onComplete={() => {}}
+                  renderer={({ seconds }) => (
+                    <Text fontSize="1.5rem">{seconds}</Text>
+                  )}
+                />
+              )}
+            </Flex>
+            <Flex gap=".5rem">
+              <TextSumBox sum={user2Sum} />
+              {user2Timer && (
+                <Countdown
+                  date={Date.now() + TURN_DURATION}
+                  onComplete={() => {}}
+                  renderer={({ seconds }) => (
+                    <Text fontSize="1.5rem">{seconds}</Text>
+                  )}
+                />
+              )}
+            </Flex>
           </Flex>
 
           <Flex justifyContent="space-between" alignItems="center">
             <UserBox profile={profile} cards={user1Cards} name="User1" />
+            <Box>
+              <Countdown
+                date={startTime + GAME_DURATION}
+                onComplete={handleGameEnd}
+                renderer={({ seconds }) => (
+                  <Flex flexDirection="column" alignItems="center">
+                    <Text fontSize="1.5rem">Game Ends In {seconds}</Text>
+                  </Flex>
+                )}
+              />
+            </Box>
+
             <UserBox profile={profile} cards={user2Cards} name="User2" />
           </Flex>
         </Flex>
