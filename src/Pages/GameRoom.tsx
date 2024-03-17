@@ -71,7 +71,7 @@ const GameRoom: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<number>(1);
   const [user1Timer, setUser1Timer] = useState<boolean>(false);
   const [user2Timer, setUser2Timer] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<number>(Date.now());
+  const [startTime] = useState<number>(Date.now());
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
@@ -144,44 +144,87 @@ const GameRoom: React.FC = () => {
               />
             ))}
         </Flex>
-
+        <Flex margin="0 auto" alignItems="center">
+          {user1Timer && (
+            <Countdown
+              date={Date.now() + TURN_DURATION}
+              onComplete={() => {}}
+              renderer={({ seconds }) => (
+                <Text fontSize="1rem">
+                  <span
+                    style={{
+                      fontWeight: "900",
+                      fontSize: "1.2rem",
+                    }}>
+                    User1
+                  </span>{" "}
+                  you have{" "}
+                  <span
+                    style={{
+                      fontWeight: "600",
+                      fontSize: "1.2rem",
+                      color: "tomato",
+                    }}>
+                    {seconds}
+                  </span>{" "}
+                  seconds to pick a card
+                </Text>
+              )}
+            />
+          )}
+          {user2Timer && (
+            <Countdown
+              date={Date.now() + TURN_DURATION}
+              onComplete={() => {}}
+              renderer={({ seconds }) => (
+                <Text fontSize="1rem">
+                  <span
+                    style={{
+                      fontWeight: "900",
+                      fontSize: "1.2rem",
+                    }}>
+                    {" "}
+                    User2{" "}
+                  </span>{" "}
+                  you have{" "}
+                  <span
+                    style={{
+                      fontWeight: "600",
+                      fontSize: "1.2rem",
+                      color: "tomato",
+                    }}>
+                    {seconds}
+                  </span>{" "}
+                  seconds to pick a card
+                </Text>
+              )}
+            />
+          )}
+        </Flex>
         <Flex flexDirection="column" gap="1rem">
           <Flex justifyContent="space-between" width="100%">
-            <Flex gap=".5rem">
-              <TextSumBox sum={user1Sum} />
-              {user1Timer && (
-                <Countdown
-                  date={Date.now() + TURN_DURATION}
-                  onComplete={() => {}}
-                  renderer={({ seconds }) => (
-                    <Text fontSize="1.5rem">{seconds}</Text>
-                  )}
-                />
-              )}
-            </Flex>
-            <Flex gap=".5rem">
-              <TextSumBox sum={user2Sum} />
-              {user2Timer && (
-                <Countdown
-                  date={Date.now() + TURN_DURATION}
-                  onComplete={() => {}}
-                  renderer={({ seconds }) => (
-                    <Text fontSize="1.5rem">{seconds}</Text>
-                  )}
-                />
-              )}
-            </Flex>
+            <TextSumBox sum={user1Sum} />
+            <TextSumBox sum={user2Sum} />
           </Flex>
 
           <Flex justifyContent="space-between" alignItems="center">
             <UserBox profile={profile} cards={user1Cards} name="User1" />
-            <Box>
+            <Box paddingX=".7rem">
               <Countdown
                 date={startTime + GAME_DURATION}
                 onComplete={handleGameEnd}
                 renderer={({ seconds }) => (
-                  <Flex flexDirection="column" alignItems="center">
-                    <Text fontSize="1.5rem">Game Ends In {seconds}</Text>
+                  <Flex flexDirection="column" justifyContent="center">
+                    <Text fontSize="1rem">
+                      Game Ends In{" "}
+                      <span
+                        style={{
+                          fontWeight: "600",
+                          fontSize: "1.2rem",
+                        }}>
+                        {seconds}
+                      </span>{" "}
+                    </Text>
                   </Flex>
                 )}
               />
