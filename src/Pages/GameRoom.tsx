@@ -215,7 +215,7 @@ const GameRoom: React.FC = () => {
                 onComplete={handleGameEnd}
                 renderer={({ seconds }) => (
                   <Flex flexDirection="column" justifyContent="center">
-                    <Text fontSize="1rem">
+                    <Text fontSize=".8rem">
                       Game Ends In{" "}
                       <span
                         style={{
