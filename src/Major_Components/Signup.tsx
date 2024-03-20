@@ -2,8 +2,11 @@ import {
   Flex,
   Heading,
   Input,
+  InputGroup,
+  InputLeftAddon,
   Radio,
   RadioGroup,
+  Select,
   Text,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
@@ -27,9 +30,27 @@ const Signup = () => {
       </Heading>
       <Flex flexDirection="column" gap="2rem">
         <Input variant="flushed" placeholder="Email address" required />
-        <Input variant="flushed" placeholder="Password" required />
-        <Input variant="flushed" placeholder="Confirm Password" required />
-        <Input variant="flushed" placeholder="Referal ID" />
+        <InputGroup variant="flushed" gap=".5rem">
+          <InputLeftAddon>+234</InputLeftAddon>
+          <Input type="tel" placeholder="8156438250" />
+        </InputGroup>
+        <Input type="number" variant="flushed" placeholder="Age" required />
+        <Select placeholder="State">
+          <option value="option1">{"states"}</option>
+        </Select>
+        <Input
+          type="password"
+          variant="flushed"
+          placeholder="Password"
+          required
+        />
+        <Input
+          type="password"
+          variant="flushed"
+          placeholder="Confirm Password"
+          required
+        />
+        <Input variant="flushed" placeholder="Referal ID" required />
       </Flex>
 
       <RadioGroup

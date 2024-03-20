@@ -12,11 +12,18 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
       <Box
         backgroundColor="#E1D7F2"
         maxWidth="100%"
-        height="115svh"
+        height="150svh"
         margin="0 auto"
-        paddingY="4rem"
+        paddingY="2rem"
         position="relative"
         overflow="hidden">
+        <Image
+          src={rotation2_logo}
+          boxSize="fit-content"
+          height="10rem"
+          objectFit="cover"
+          margin="0rem auto"
+        />
         <Box
           backgroundColor="#9C7BD3"
           height="100px"
@@ -25,13 +32,6 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
           position="absolute"
           right="-7%"
           top="-3%"
-        />
-        <Image
-          src={rotation2_logo}
-          boxSize="fit-content"
-          height="10rem"
-          objectFit="cover"
-          margin="0rem auto"
         />
         <Flex gap="8rem" position="relative">
           <Box
@@ -63,9 +63,8 @@ const Auth_Background: React.FC<AuthBackgroundProps> = ({ children }) => {
         <Box
           width="80%"
           position="absolute"
-          marginTop="7rem"
-          paddingY="rem"
-          top="45%"
+          marginY="3rem"
+          top="50%"
           left="50%"
           transform="translate(-50%, -50%)">
           {children}
