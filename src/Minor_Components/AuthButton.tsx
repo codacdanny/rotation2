@@ -7,7 +7,7 @@ type AuthButtonProps = {
 };
 
 const AuthButton: React.FC<AuthButtonProps> = ({ buttonText }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <Button
       borderRadius="30px"
