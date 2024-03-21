@@ -1,4 +1,5 @@
 import {
+  Box,
   Flex,
   Heading,
   Input,
@@ -191,7 +192,9 @@ const Signup: React.FC = () => {
           <Radio value="male">Male</Radio>
           <Radio value="female">Female</Radio>
         </RadioGroup>
-        <AuthButton buttonText="Sign Up" />
+        <Box textAlign="center">
+          <AuthButton buttonText="Sign Up" />
+        </Box>
         <Flex
           gap=".5rem"
           justifyContent="center"
