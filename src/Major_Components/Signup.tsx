@@ -212,7 +212,7 @@ const Signup: React.FC = () => {
               transform: "scale(1.05)",
               transition: "all .2s ease-in-out",
             }}>
-            sign up
+            Sign Up
           </Button>
         </Box>
         <Flex
