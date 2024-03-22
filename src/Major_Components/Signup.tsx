@@ -6,13 +6,13 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
-  Radio,
-  RadioGroup,
   Select,
   Text,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
 // import AuthButton from "../Minor_Components/AuthButton";
 import { ChangeEvent, FormEventHandler, useState } from "react";
 
@@ -24,7 +24,6 @@ type FormData = {
   password: string;
   confirmPassword: string;
   referralID: string;
-  gender: "male" | "female";
 };
 
 const statesInNigeria: string[] = [
@@ -68,6 +67,8 @@ const statesInNigeria: string[] = [
 ];
 
 const Signup: React.FC = () => {
+  const navigate = useNavigate();
+  const toast = useToast();
   const [formData, setFormData] = useState<FormData>({
     email: "",
     phoneNumber: "",
@@ -76,7 +77,6 @@ const Signup: React.FC = () => {
     password: "",
     confirmPassword: "",
     referralID: "",
-    gender: "male", // Default to male
   });
 
   const handleInputChange = (
@@ -87,6 +87,7 @@ const Signup: React.FC = () => {
       ...prevData,
       [name]: value,
     }));
+    console.log(value);
   };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -97,8 +98,17 @@ const Signup: React.FC = () => {
         formData
       );
       console.log(response.data);
+      navigate("/dashboard");
     } catch (error) {
       console.error((error as AxiosError).response?.data);
+      toast({
+        title: "Error",
+        description: "connection error",
+        status: "error",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
   return (
@@ -184,19 +194,6 @@ const Signup: React.FC = () => {
           />
         </Flex>
 
-        <RadioGroup
-          name="gender"
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          marginY="1rem"
-          value={formData.gender}
-          onChange={(value) =>
-            setFormData({ ...formData, gender: value as "male" | "female" })
-          }>
-          <Radio value="male">Male</Radio>
-          <Radio value="female">Female</Radio>
-        </RadioGroup>
         <Box textAlign="center">
           {/* <AuthButton buttonText="Sign Up" /> */}
           <Button
