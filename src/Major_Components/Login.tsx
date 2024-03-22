@@ -1,7 +1,16 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import { Box, Flex, Heading, Input, Text } from "@chakra-ui/react";
+import React, { useState, ChangeEvent, FormEventHandler } from "react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Input,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 // import AuthButton from "../Minor_Components/AuthButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios, { AxiosError } from "axios";
 
 type FormData = {
   email: string;
@@ -13,7 +22,8 @@ const Login: React.FC = () => {
     email: "",
     password: "",
   });
-
+  const navigate = useNavigate();
+  const toast = useToast();
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -22,11 +32,26 @@ const Login: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    // Send formData to the backend
-    console.log(formData);
-    // You can make a fetch request or use any library like Axios to send data to the backend here
+    try {
+      const response = await axios.post(
+        "https://rotation2-backend.onrender.com/api/user/login",
+        formData
+      );
+      console.log(response.data);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error((error as AxiosError).response?.data);
+      toast({
+        title: "Error",
+        description: "connection error",
+        status: "error",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -70,7 +95,25 @@ const Login: React.FC = () => {
             <Link to="#">forgot password?</Link>
           </Box>
         </Flex>
-        <Box textAlign="center">{/* <AuthButton buttonText="Login" /> */}</Box>
+        <Box textAlign="center">
+          <Button
+            type="submit"
+            borderRadius="30px"
+            width="fit-content"
+            margin="1rem auto"
+            padding="1rem 2.5rem"
+            backgroundColor="#6B39BD"
+            color="#F7F7F7"
+            _hover={{
+              backgroundColor: "#6B39BD",
+            }}
+            _active={{
+              transform: "scale(1.05)",
+              transition: "all .2s ease-in-out",
+            }}>
+            Login
+          </Button>
+        </Box>
       </form>
       <Flex
         gap=".5rem"
