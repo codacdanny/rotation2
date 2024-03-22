@@ -16,7 +16,6 @@ import setting from "../assets/setting-2.svg";
 import favourite from "../assets/star.svg";
 import notification from "../assets/notification-bing.svg";
 import User from "../Minor_Components/User";
-import { Link } from "react-router-dom";
 
 const WelcomeSection: React.FC = () => (
   <Flex flexDirection="column" color="#24133F" alignItems="center" gap="2rem">
@@ -62,11 +61,9 @@ const IconButtonSection: React.FC<{ icon: string; alt: string }> = ({
   icon,
   alt,
 }) => (
-  <Link to="/profile">
-    <Button variant="ghost" colorScheme="transparent">
-      <Image src={icon} alt={alt} boxSize="30px" />
-    </Button>
-  </Link>
+  <Button variant="ghost" colorScheme="transparent">
+    <Image src={icon} alt={alt} boxSize="30px" />
+  </Button>
 );
 
 const PickPage: React.FC = () => {
@@ -78,13 +75,12 @@ const PickPage: React.FC = () => {
       bgGradient="linear-gradient(180deg, #E1D7F2 0%, rgba(107, 57, 189, 0.20) 53.96%, rgba(225, 215, 242, 0.00) 100%)">
       <WelcomeSection />
       <Box textAlign="center" marginY="2rem">
-        <Link to="/pair">
-          <PrimaryButton
-            buttonText="Find your opponent"
-            backgroundColor="#24133F"
-            textColor="#F7F7F7"
-          />
-        </Link>
+        <PrimaryButton
+          buttonText="Find your opponent"
+          backgroundColor="#24133F"
+          textColor="#F7F7F7"
+          pageName="#"
+        />
       </Box>
       <Box textAlign="center">
         <CircularProgressSection />
