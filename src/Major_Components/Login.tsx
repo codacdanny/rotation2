@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Box, Flex, Heading, Input, Text } from "@chakra-ui/react";
-import AuthButton from "../Minor_Components/AuthButton";
+// import AuthButton from "../Minor_Components/AuthButton";
 import { Link } from "react-router-dom";
 
 type FormData = {
@@ -70,9 +70,7 @@ const Login: React.FC = () => {
             <Link to="#">forgot password?</Link>
           </Box>
         </Flex>
-        <Box textAlign="center">
-          <AuthButton buttonText="Login" />
-        </Box>
+        <Box textAlign="center">{/* <AuthButton buttonText="Login" /> */}</Box>
       </form>
       <Flex
         gap=".5rem"

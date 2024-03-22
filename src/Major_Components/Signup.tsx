@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Flex,
   Heading,
   Input,
@@ -11,8 +12,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import AuthButton from "../Minor_Components/AuthButton";
-import { ChangeEvent, FormEvent, useState } from "react";
+import axios, { AxiosError } from "axios";
+// import AuthButton from "../Minor_Components/AuthButton";
+import { ChangeEvent, FormEventHandler, useState } from "react";
 
 type FormData = {
   email: string;
@@ -87,13 +89,18 @@ const Signup: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    // Send formData to the backend
-    console.log(formData);
-    // You can make a fetch request or use any library like Axios to send data to the backend here
+    try {
+      const response = await axios.post(
+        "https://rotation2-backend.onrender.com/api/user/register",
+        formData
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error((error as AxiosError).response?.data);
+    }
   };
-
   return (
     <Flex
       backgroundColor="#F7F7F7"
@@ -122,7 +129,6 @@ const Signup: React.FC = () => {
           <InputGroup variant="flushed" gap=".5rem">
             <InputLeftAddon>+234</InputLeftAddon>
             <Input
-              type="tel"
               placeholder="8156438250"
               name="phoneNumber"
               value={formData.phoneNumber}
@@ -131,7 +137,6 @@ const Signup: React.FC = () => {
             />
           </InputGroup>
           <Input
-            type="number"
             variant="flushed"
             placeholder="Age"
             name="age"
@@ -193,7 +198,25 @@ const Signup: React.FC = () => {
           <Radio value="female">Female</Radio>
         </RadioGroup>
         <Box textAlign="center">
-          <AuthButton buttonText="Sign Up" />
+          {/* <AuthButton buttonText="Sign Up" /> */}
+          <Button
+            type="submit"
+            borderRadius="30px"
+            width="fit-content"
+            margin="1rem auto"
+            padding="1rem 2.5rem"
+            backgroundColor="#6B39BD"
+            color="#F7F7F7"
+            // onClick={() => navigate("/dashboard")}
+            _hover={{
+              backgroundColor: "#6B39BD",
+            }}
+            _active={{
+              transform: "scale(1.05)",
+              transition: "all .2s ease-in-out",
+            }}>
+            sign up
+          </Button>
         </Box>
         <Flex
           gap=".5rem"

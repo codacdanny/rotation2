@@ -14,6 +14,8 @@ import {
   Button,
   Box,
 } from "@chakra-ui/react";
+// import { io } from "socket.io-client";
+import Countdown from "react-countdown";
 import one from "../assets/1.svg";
 import two from "../assets/2.svg";
 import three from "../assets/3.svg";
@@ -26,7 +28,6 @@ import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
-import Countdown from "react-countdown";
 
 type Card = {
   image: string;
@@ -61,6 +62,8 @@ type Sum = number;
 const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
 const GAME_DURATION = 50000;
 const TURN_DURATION = 5000; // 5 seconds
+
+// const socket = io("https://rotation2-backend.onrender.com/");
 
 const GameRoom: React.FC = () => {
   const [user1Cards, setUser1Cards] = useState<UserCards>([]);
