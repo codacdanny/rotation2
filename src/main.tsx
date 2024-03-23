@@ -5,13 +5,16 @@ import App from "./App.tsx";
 import "./index.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./theme.tsx";
+import { SocketProvider } from "./services/Context/SocketContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <Router>
-        <App />
-      </Router>
+      <SocketProvider>
+        <Router>
+          <App />
+        </Router>
+      </SocketProvider>
     </ChakraProvider>
   </React.StrictMode>
 );

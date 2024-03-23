@@ -14,7 +14,7 @@ import {
   Button,
   Box,
 } from "@chakra-ui/react";
-// import { io } from "socket.io-client";
+
 import Countdown from "react-countdown";
 import one from "../assets/1.svg";
 import two from "../assets/2.svg";
@@ -28,6 +28,11 @@ import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
+import {
+  useGameState,
+  useRoomId,
+  useSocket,
+} from "../services/Context/SocketContext";
 
 type Card = {
   image: string;
@@ -63,8 +68,6 @@ const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
 const GAME_DURATION = 50000;
 const TURN_DURATION = 5000; // 5 seconds
 
-// const socket = io("https://rotation2-backend.onrender.com/");
-
 const GameRoom: React.FC = () => {
   const [user1Cards, setUser1Cards] = useState<UserCards>([]);
   const [user2Cards, setUser2Cards] = useState<UserCards>([]);
@@ -75,45 +78,65 @@ const GameRoom: React.FC = () => {
   const [user1Timer, setUser1Timer] = useState<boolean>(false);
   const [user2Timer, setUser2Timer] = useState<boolean>(false);
   const [startTime] = useState<number>(Date.now());
+  const [gameRoomState, setGameRoomState] = useState<any>({});
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const socket = useSocket();
+  const roomId = useRoomId();
+  const gameState = useGameState();
+
+  // useEffect(() => {
+  //   if (
+  //     user1Cards.length === MAX_CARDS_PER_USER &&
+  //     user2Cards.length === MAX_CARDS_PER_USER
+  //   ) {
+  //     onOpen();
+  //   }
+  // }, [user1Cards, user2Cards, onOpen]);
   useEffect(() => {
-    if (
-      user1Cards.length === MAX_CARDS_PER_USER &&
-      user2Cards.length === MAX_CARDS_PER_USER
-    ) {
+    setCurrentUser((gameRoomState.turn % 2) + 1);
+  }, [gameRoomState.turn]);
+
+  useEffect(() => {
+    if (gameRoomState.player1 && gameRoomState.player2) {
       onOpen();
     }
-  }, [user1Cards, user2Cards, onOpen]);
+  }, [gameRoomState.player1, gameRoomState.player2, onOpen]);
 
   const handlePickCard = (card: Card) => {
-    if (currentUser === 1 && user1Cards.length >= MAX_CARDS_PER_USER) {
-      alert("User 1 has reached the maximum number of cards!");
+    // Emit card pick event to the backend
+    socket.emit("pick", card, roomId);
+
+    const currentPlayer =
+      currentUser === 1 ? gameRoomState.player1 : gameRoomState.player2;
+
+    if (currentPlayer.noOfPlay >= MAX_CARDS_PER_USER) {
+      alert(`User ${currentUser} has reached the maximum number of cards!`);
       return;
     }
 
-    if (currentUser === 2 && user2Cards.length >= MAX_CARDS_PER_USER) {
-      alert("User 2 has reached the maximum number of cards!");
-      return;
-    }
+    if (!currentPlayer.cardPickedList.includes(card.image)) {
+      const updatedPickedCards = [...currentPlayer.cardPickedList, card.image];
 
-    if (!pickedCards.includes(card.image)) {
-      const updatedPickedCards = [...pickedCards, card.image];
-      setPickedCards(updatedPickedCards);
+      // Update player's picked card list and increment play count
+      const updatedPlayer = {
+        ...currentPlayer,
+        cardPickedList: updatedPickedCards,
+        noOfPlay: currentPlayer.noOfPlay + 1,
+      };
 
-      if (currentUser === 1) {
-        setUser1Cards([...user1Cards, card]);
-        setUser1Sum(user1Sum + card.value);
-        setCurrentUser(2);
-        setUser1Timer(false);
-        setUser2Timer(true);
-      } else {
-        setUser2Cards([...user2Cards, card]);
-        setUser2Sum(user2Sum + card.value);
-        setCurrentUser(1);
-        setUser2Timer(false);
-        setUser1Timer(true);
-      }
+      // Update game room state based on the current user
+      setGameRoomState((prevState: any) => ({
+        ...prevState,
+        [`player${currentUser}`]: updatedPlayer,
+        turn:
+          updatedPlayer.noOfPlay === MAX_CARDS_PER_USER
+            ? (currentUser % 2) + 1
+            : prevState.turn,
+      }));
+
+      // Emit updated game room state to all clients in the room
+      io.to(roomId).emit("gameRoomUpdate", gameState[roomId]);
     }
   };
 
@@ -121,6 +144,14 @@ const GameRoom: React.FC = () => {
     // Perform actions to end the game (e.g., declare a winner)
     console.log("Game Over!");
   };
+  socket.on("gameRoomUpdate", (updatedState: any) => {
+    setGameRoomState(updatedState);
+  });
+
+  socket.on("gameOver", (updatedState: any) => {
+    setGameRoomState(updatedState);
+    onClose();
+  });
 
   return (
     <>
@@ -330,3 +361,87 @@ const WinnerModal: React.FC<{
 };
 
 export default GameRoom;
+
+// const handlePickCard = (card: Card) => {
+//   socket.emit("pick", card, roomId);
+//   if (currentUser === 1 && user1Cards.length >= MAX_CARDS_PER_USER) {
+//     alert("User 1 has reached the maximum number of cards!");
+//     return;
+//   }
+
+//   if (currentUser === 2 && user2Cards.length >= MAX_CARDS_PER_USER) {
+//     alert("User 2 has reached the maximum number of cards!");
+//     return;
+//   }
+
+//   if (!pickedCards.includes(card.image)) {
+//     const updatedPickedCards = [...pickedCards, card.image];
+//     setPickedCards(updatedPickedCards);
+
+//     if (currentUser === 1) {
+//       setUser1Cards([...user1Cards, card]);
+//       setUser1Sum(user1Sum + card.value);
+//       setCurrentUser(2);
+//       setUser1Timer(false);
+//       setUser2Timer(true);
+//     } else {
+//       setUser2Cards([...user2Cards, card]);
+//       setUser2Sum(user2Sum + card.value);
+//       setCurrentUser(1);
+//       setUser2Timer(false);
+//       setUser1Timer(true);
+//     }
+//   }
+
+//   if (currentUser === 1) {
+//     setGameRoomState(
+//       (prevState: {
+//         player1: { cardPickedList: any; noOfPlay: number };
+//         player2: { noOfPlay: number };
+//         turn: any;
+//       }) => {
+//         const newPlayer1 = {
+//           ...prevState.player1,
+//           cardPickedList: [...prevState.player1.cardPickedList, card],
+//           noOfPlay: prevState.player1.noOfPlay + 1,
+//         };
+
+//         return {
+//           ...prevState,
+//           player1: newPlayer1,
+//           turn:
+//             newPlayer1.noOfPlay === 5
+//               ? (prevState.player2.noOfPlay + 1) % 2
+//               : prevState.turn,
+//         };
+//       }
+//     );
+
+//     socket.emit("pick", gameRoomState, socket.id);
+//   } else {
+//     setGameRoomState(
+//       (prevState: {
+//         player2: { cardPickedList: any; noOfPlay: number };
+//         player1: { noOfPlay: number };
+//         turn: any;
+//       }) => {
+//         const newPlayer2 = {
+//           ...prevState.player2,
+//           cardPickedList: [...prevState.player2.cardPickedList, card],
+//           noOfPlay: prevState.player2.noOfPlay + 1,
+//         };
+
+//         return {
+//           ...prevState,
+//           player2: newPlayer2,
+//           turn:
+//             newPlayer2.noOfPlay === 5
+//               ? (prevState.player1.noOfPlay + 1) % 2
+//               : prevState.turn,
+//         };
+//       }
+//     );
+
+//     socket.emit("pick", gameRoomState, socket.id);
+//   }
+// };
