@@ -1,17 +1,11 @@
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, ReactNode, useContext } from "react";
 import { io, Socket } from "socket.io-client";
 
-const URL = "https://rotation2-backend.onrender.com/";
+const URL = "http://localhost:3000/";
 
-export const SocketContext = createContext<Socket | null>(null);
-export const socket = io(URL, {
-  autoConnect: true,
+const SocketContext = createContext<Socket | null>(null);
+const socket = io(URL, {
+  autoConnect: false,
 });
 
 export const SocketProvider: React.FC<{ children: ReactNode }> = ({
@@ -30,26 +24,27 @@ export function useSocket() {
   return context;
 }
 
-export function useRoomId() {
-  const [roomId, setRoomId] = useState<string | null>(null);
+// export function useRoomId() {
+//   const [roomId, setRoomId] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Fetch or generate roomId logic goes here
-    // For simplicity, let's assume it's fetched from somewhere
-    const fetchedRoomId = "your_fetched_room_id_here";
-    setRoomId(fetchedRoomId);
-  }, []);
+//   useEffect(() => {
+//     // Fetch or generate roomId logic goes here
+//     // For simplicity, let's assume it's fetched from somewhere
+//     socket.on("connect", () => {});
+//     const fetchedRoomId = "your_fetched_room_id_here";
+//     setRoomId(fetchedRoomId);
+//   }, []);
 
-  return roomId;
-}
+//   return roomId;
+// }
 
-export function useGameState() {
-  const [gameState, setGameState] = useState<any>({});
+// export function useGameState() {
+//   const [gameState, setGameState] = useState<any>({});
 
-  // Fetch or initialize game state logic goes here
+//   // Fetch or initialize game state logic goes here
 
-  return gameState;
-}
+//   return gameState;
+// }
 
 // import React, { createContext, ReactNode, useContext } from "react";
 // import { io, Socket } from "socket.io-client";
