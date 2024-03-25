@@ -14,10 +14,9 @@ const DashbordPage = ({ socket }) => {
   const handleJoinGame = () => {
     if (socket) console.log("huraayyy");
 
-    // Connect to server
     socket.emit("play", () => {
       console.log("playedd");
-    }); // Emit 'play' event to join game
+    });
     navigate("/game"); // Pass socket instance as state to game room
   };
   return (

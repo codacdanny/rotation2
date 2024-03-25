@@ -14,7 +14,7 @@ function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const socketInstance = io("http://localhost:3000/");
+    const socketInstance = io("https://rotation2-backend.onrender.com/");
     setSocket(socketInstance);
 
     return () => {

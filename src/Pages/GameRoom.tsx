@@ -29,8 +29,6 @@ import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
-import { Socket } from "socket.io-client";
-import { useSocket } from "../services/Context/SocketContext";
 
 type Card = {
   image: string;
@@ -112,8 +110,11 @@ const GameRoom = ({ socket }) => {
       socket.on("connect", () => {
         console.log("Connected to server");
       });
+      socket.emit("play");
+
       socket.on("room", (roomId: string) => {
         setRoomId(roomId);
+        console.log("victor no get babe");
       });
 
       socket.on(

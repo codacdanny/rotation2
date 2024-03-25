@@ -92,6 +92,45 @@ const Signup: React.FC = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    if (
+      formData.referralID !== "dualmainRC" &&
+      formData.referralID !== "monomainRC"
+    ) {
+      toast({
+        title: "Error",
+        description: "Wrong referral ID",
+        status: "error",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (parseInt(formData.age) < 18) {
+      toast({
+        title: "Error",
+        description: "You must be 18 or older to sign up",
+        status: "error",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (formData.phoneNumber.length > 11 || formData.phoneNumber.length < 10) {
+      toast({
+        title: "Error",
+        description: "Invalid phone number",
+        status: "error",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (formData.phoneNumber.length === 11) {
+      formData.phoneNumber = formData.phoneNumber.slice(1);
+    }
     try {
       const response = await axios.post(
         "https://rotation2-backend.onrender.com/api/user/register",
@@ -103,7 +142,8 @@ const Signup: React.FC = () => {
       console.error((error as AxiosError).response?.data);
       toast({
         title: "Error",
-        description: "connection error",
+        description:
+          (error as AxiosError).response?.data.msg || "connection error",
         status: "error",
         position: "top-right",
         duration: 9000,
