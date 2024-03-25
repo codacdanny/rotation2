@@ -4,13 +4,21 @@ import DebitCard from "../Minor_Components/DebitCard";
 import PrimaryButton from "../Minor_Components/PrimaryButton";
 import Transactiions from "../Major_Components/Transactiions";
 import { useNavigate } from "react-router-dom";
+
+// import { useEffect, useState } from "react";
 // import { useSocket } from "../services/Context/SocketContext";
 
-const DashbordPage = () => {
-  // const socket = useSocket();
+const DashbordPage = ({ socket }) => {
   const navigate = useNavigate();
+
   const handleJoinGame = () => {
-    navigate("/game");
+    if (socket) console.log("huraayyy");
+
+    // Connect to server
+    socket.emit("play", () => {
+      console.log("playedd");
+    }); // Emit 'play' event to join game
+    navigate("/game"); // Pass socket instance as state to game room
   };
   return (
     <Box backgroundColor="#F7F7F7" height="100%" padding=".7rem">
