@@ -4,10 +4,10 @@ import DebitCard from "../Minor_Components/DebitCard";
 import PrimaryButton from "../Minor_Components/PrimaryButton";
 import Transactiions from "../Major_Components/Transactiions";
 import { useNavigate } from "react-router-dom";
-import { useSocket } from "../services/Context/SocketContext";
+// import { useSocket } from "../services/Context/SocketContext";
 
 const DashbordPage = () => {
-  const socket = useSocket();
+  // const socket = useSocket();
   const navigate = useNavigate();
   const handleJoinGame = () => {
     navigate("/game");

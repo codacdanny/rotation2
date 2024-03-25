@@ -28,12 +28,26 @@ import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
-import { useSocket } from "../services/Context/SocketContext";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
 type Card = {
   image: string;
   value: number;
+};
+type GameState = {
+  turn: number;
+  player1: {
+    id: string;
+    cardPickedList: number[];
+    cardPickedSum: number;
+    noOfPlay: number;
+  };
+  player2: {
+    id: string;
+    cardPickedList: number[];
+    cardPickedSum: number;
+    noOfPlay: number;
+  };
 };
 
 const cardImages: Card[] = [
@@ -49,8 +63,7 @@ const cardImages: Card[] = [
   { image: ten, value: 160 },
 ];
 
-const cardNumber = [10, 2, 3, 140, 40, 70, 80, 50, 170, 160];
-const shuffleArray = (array: any[]) => {
+const shuffleArray = (array: Card[]) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -58,110 +71,103 @@ const shuffleArray = (array: any[]) => {
   return array;
 };
 
-const shuffledCardImages = shuffleArray(cardImages);
-
+const shuffledCardImages: Card[] = shuffleArray(cardImages);
 type UserCards = Card[];
 type Sum = number;
 
-const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
-const GAME_DURATION = 50000;
-const TURN_DURATION = 5000; // 5 seconds
+// const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
+const GAME_DURATION = 1200000;
+const TURN_DURATION = 15000; // 5 seconds
 
 const GameRoom: React.FC = () => {
-  const URL = "https://rotation2-backend.onrender.com/";
-
-  let socketId;
-  let socket: any;
-  // const socket = io(URL, {
-  //   autoConnect: false,
-  // });
-  // console.log(URL, socket);
-
-  const [user1Cards, setUser1Cards] = useState<UserCards>([]);
-  const [user2Cards, setUser2Cards] = useState<UserCards>([]);
+  const [user1Cards, setUser1Cards] = useState<any>([]);
+  const [user2Cards, setUser2Cards] = useState<any>([]);
   const [user1Sum, setUser1Sum] = useState<Sum>(0);
   const [user2Sum, setUser2Sum] = useState<Sum>(0);
-  const [pickedCards, setPickedCards] = useState<string[]>([]);
-  const [currentUser, setCurrentUser] = useState<number>(1);
-  const [user1Timer, setUser1Timer] = useState<boolean>(false);
-  const [user2Timer, setUser2Timer] = useState<boolean>(false);
+  const [pickedCards] = useState<string[]>([]);
+  // const [currentUser, setCurrentUser] = useState<number>(1);
+  const [user1Timer] = useState<boolean>(false);
+  const [user2Timer] = useState<boolean>(false);
   const [startTime] = useState<number>(Date.now());
-  const [gameState, setGameState] = useState<any>({
+  const [socket, setSocket] = useState<Socket>();
+  const [gameState, setGameState] = useState<GameState>({
     turn: 0,
-    player1: {
-      id: socketId,
-      cardPickedList: [],
-      cardPickedSum: 0,
-      noOfPlay: 0,
-    },
-    player2: {
-      id: socketId,
-      cardPickedList: [],
-      cardPickedSum: 0,
-      noOfPlay: 0,
-    },
+    player1: { id: "", cardPickedList: [], cardPickedSum: 0, noOfPlay: 0 },
+    player2: { id: "", cardPickedList: [], cardPickedSum: 0, noOfPlay: 0 },
   });
-  const [roomId, setRoomId] = useState(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const { isOpen, onClose } = useDisclosure();
+  // socket = io(URL);
   useEffect(() => {
-    socket = io(URL);
-    console.log(URL, socket);
+    // socket = io(URL);
+    const URL = "https://rotation2-backend.onrender.com/";
+    const socketInstance = io(URL);
+    setSocket(socketInstance);
 
-    socket.on("connect", () => {
-      socketId = socket;
-      console.log("connected to server");
-      console.log(URL, socket);
+    socketInstance.on("connect", () => {
+      console.log("Connected to server");
     });
-    socket.on("room", (roomId: React.SetStateAction<null>) => {
+    socketInstance.on("room", (roomId: string) => {
       setRoomId(roomId);
     });
-    socket.emit("play");
-    socket.on("gameRoomUpdate", ({ gameRoomState }: { gameRoomState: unknown }) => {
-      setGameState(gameRoomState);
-    });
-    socket.on("gameOver", ({ gameRoomState }: { gameRoomState: unknown }) => {
-      // Handle game over logic
-      console.log("Game Over", gameRoomState);
-    });
+
+    socketInstance.on(
+      "gameRoomUpdate",
+      ({ gameRoomState }: { gameRoomState: GameState }) => {
+        setGameState(gameRoomState);
+        // Update user cards and sums when game state is received
+        setUser1Cards(gameRoomState.player1.cardPickedList);
+        setUser2Cards(gameRoomState.player2.cardPickedList);
+        setUser1Sum(gameRoomState.player1.cardPickedSum);
+        setUser2Sum(gameRoomState.player2.cardPickedSum);
+      }
+    );
+    socketInstance.on(
+      "gameOver",
+      ({ gameRoomState }: { gameRoomState: GameState }) => {
+        console.log("Game Over", gameRoomState);
+        // Handle game over logic here
+      }
+    );
 
     return () => {
-      socket.disconnect();
+      socketInstance.disconnect();
     };
-  }, [socket]);
+  }, []);
   const handleGameEnd = () => {
     console.log("timer end");
   };
 
-  const handlePickCard = () => {
-    socket.emit("pick", gameState, roomId, cardNumber);
+  const handlePickCard = (cardValue: number) => {
+    const updatedGameState = { ...gameState };
+    updatedGameState.turn = updatedGameState.turn % 2;
+    const currentPlayer = `player${updatedGameState.turn + 1}` as
+      | "player1"
+      | "player2";
+    updatedGameState[currentPlayer].cardPickedSum += cardValue;
+    updatedGameState[currentPlayer].cardPickedList.push(cardValue);
+    updatedGameState[currentPlayer].noOfPlay++;
+    setGameState(updatedGameState); // Update local state
+
+    if (socket && roomId) {
+      socket.emit("pick", updatedGameState, roomId, cardValue);
+    }
+
+    // Update user cards and sums locally
+    if (currentPlayer === "player1") {
+      setUser1Cards([
+        ...user1Cards,
+        { image: cardImages[cardValue - 1].image, value: cardValue },
+      ]);
+      setUser1Sum(user1Sum + cardValue);
+    } else {
+      setUser2Cards([
+        ...user2Cards,
+        { image: cardImages[cardValue - 1].image, value: cardValue },
+      ]);
+      setUser2Sum(user2Sum + cardValue);
+    }
   };
-
-  // useEffect(() => {
-  //   socket.on("connect", () => {
-  //     socketId = socket.id;
-  //     console.log("connected to server");
-  //   });
-  //   socket.on("room", (roomId) => {
-  //     setRoomId(roomId);
-  //   });
-  //   socket.on("gameRoomUpdate", ({ gameRoomState }) => {
-  //     setGameState(gameRoomState);
-  //   });
-  //   socket.on("gameOver", ({ gameRoomState }) => {
-  //     // Handle game over logic
-  //     console.log("Game Over", gameRoomState);
-  //   });
-
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // });
-  // socket.on("connect", () => {
-  //   socketId = socket.id;
-  //   console.log("connected to server");
-  // });
-
   return (
     <>
       <Flex
@@ -175,14 +181,18 @@ const GameRoom: React.FC = () => {
           {shuffledCardImages
             .filter(
               (card) =>
-                !user1Cards.some((userCard) => userCard.image === card.image) &&
-                !user2Cards.some((userCard) => userCard.image === card.image)
+                !user1Cards.some(
+                  (userCard: { image: string }) => userCard.image === card.image
+                ) &&
+                !user2Cards.some(
+                  (userCard: { image: string }) => userCard.image === card.image
+                )
             )
             .map((card, index) => (
               <ClickableCard
+                handlePickCard={handlePickCard}
                 key={index}
                 card={card}
-                onClick={handlePickCard}
                 picked={pickedCards.includes(card.image)}
               />
             ))}
@@ -289,11 +299,11 @@ const GameRoom: React.FC = () => {
 
 const ClickableCard: React.FC<{
   card: Card;
-  onClick: () => void;
   picked: boolean;
-}> = ({ card, onClick, picked }) => (
+  handlePickCard: (cardValue: number) => void; // Add handlePickCard prop
+}> = ({ card, picked, handlePickCard }) => (
   <Image
-    onClick={onClick}
+    onClick={() => handlePickCard(card.value)} // Call handlePickCard with card value onClick
     height="6rem"
     src={picked ? card.image : back}
     alt={`Card ${card.value}`}
