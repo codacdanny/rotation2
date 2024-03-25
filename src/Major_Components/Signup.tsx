@@ -142,8 +142,7 @@ const Signup: React.FC = () => {
       console.error((error as AxiosError).response?.data);
       toast({
         title: "Error",
-        description:
-          (error as AxiosError).response?.data.msg || "connection error",
+        description: error.response?.data.msg || "connection error",
         status: "error",
         position: "top-right",
         duration: 9000,
