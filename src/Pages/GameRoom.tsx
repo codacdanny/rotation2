@@ -14,7 +14,7 @@ import {
   Button,
   Box,
 } from "@chakra-ui/react";
-// import { io } from "socket.io-client";
+
 import Countdown from "react-countdown";
 import one from "../assets/1.svg";
 import two from "../assets/2.svg";
@@ -28,10 +28,26 @@ import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
+import { io, Socket } from "socket.io-client";
 
 type Card = {
   image: string;
   value: number;
+};
+type GameState = {
+  turn: number;
+  player1: {
+    id: string;
+    cardPickedList: number[];
+    cardPickedSum: number;
+    noOfPlay: number;
+  };
+  player2: {
+    id: string;
+    cardPickedList: number[];
+    cardPickedSum: number;
+    noOfPlay: number;
+  };
 };
 
 const cardImages: Card[] = [
@@ -46,7 +62,8 @@ const cardImages: Card[] = [
   { image: nine, value: 170 },
   { image: ten, value: 160 },
 ];
-const shuffleArray = (array: any[]) => {
+
+const shuffleArray = (array: Card[]) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -54,74 +71,103 @@ const shuffleArray = (array: any[]) => {
   return array;
 };
 
-const shuffledCardImages = shuffleArray(cardImages);
-
+const shuffledCardImages: Card[] = shuffleArray(cardImages);
 type UserCards = Card[];
 type Sum = number;
 
-const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
-const GAME_DURATION = 50000;
-const TURN_DURATION = 5000; // 5 seconds
-
-// const socket = io("https://rotation2-backend.onrender.com/");
+// const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
+const GAME_DURATION = 1200000;
+const TURN_DURATION = 15000; // 5 seconds
 
 const GameRoom: React.FC = () => {
-  const [user1Cards, setUser1Cards] = useState<UserCards>([]);
-  const [user2Cards, setUser2Cards] = useState<UserCards>([]);
+  const [user1Cards, setUser1Cards] = useState<any>([]);
+  const [user2Cards, setUser2Cards] = useState<any>([]);
   const [user1Sum, setUser1Sum] = useState<Sum>(0);
   const [user2Sum, setUser2Sum] = useState<Sum>(0);
-  const [pickedCards, setPickedCards] = useState<string[]>([]);
-  const [currentUser, setCurrentUser] = useState<number>(1);
-  const [user1Timer, setUser1Timer] = useState<boolean>(false);
-  const [user2Timer, setUser2Timer] = useState<boolean>(false);
+  const [pickedCards] = useState<string[]>([]);
+  // const [currentUser, setCurrentUser] = useState<number>(1);
+  const [user1Timer] = useState<boolean>(false);
+  const [user2Timer] = useState<boolean>(false);
   const [startTime] = useState<number>(Date.now());
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [socket, setSocket] = useState<Socket>();
+  const [gameState, setGameState] = useState<GameState>({
+    turn: 0,
+    player1: { id: "", cardPickedList: [], cardPickedSum: 0, noOfPlay: 0 },
+    player2: { id: "", cardPickedList: [], cardPickedSum: 0, noOfPlay: 0 },
+  });
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const { isOpen, onClose } = useDisclosure();
+  // socket = io(URL);
   useEffect(() => {
-    if (
-      user1Cards.length === MAX_CARDS_PER_USER &&
-      user2Cards.length === MAX_CARDS_PER_USER
-    ) {
-      onOpen();
-    }
-  }, [user1Cards, user2Cards, onOpen]);
+    // socket = io(URL);
+    const URL = "https://rotation2-backend.onrender.com/";
+    const socketInstance = io(URL);
+    setSocket(socketInstance);
 
-  const handlePickCard = (card: Card) => {
-    if (currentUser === 1 && user1Cards.length >= MAX_CARDS_PER_USER) {
-      alert("User 1 has reached the maximum number of cards!");
-      return;
-    }
+    socketInstance.on("connect", () => {
+      console.log("Connected to server");
+    });
+    socketInstance.on("room", (roomId: string) => {
+      setRoomId(roomId);
+    });
 
-    if (currentUser === 2 && user2Cards.length >= MAX_CARDS_PER_USER) {
-      alert("User 2 has reached the maximum number of cards!");
-      return;
-    }
-
-    if (!pickedCards.includes(card.image)) {
-      const updatedPickedCards = [...pickedCards, card.image];
-      setPickedCards(updatedPickedCards);
-
-      if (currentUser === 1) {
-        setUser1Cards([...user1Cards, card]);
-        setUser1Sum(user1Sum + card.value);
-        setCurrentUser(2);
-        setUser1Timer(false);
-        setUser2Timer(true);
-      } else {
-        setUser2Cards([...user2Cards, card]);
-        setUser2Sum(user2Sum + card.value);
-        setCurrentUser(1);
-        setUser2Timer(false);
-        setUser1Timer(true);
+    socketInstance.on(
+      "gameRoomUpdate",
+      ({ gameRoomState }: { gameRoomState: GameState }) => {
+        setGameState(gameRoomState);
+        // Update user cards and sums when game state is received
+        setUser1Cards(gameRoomState.player1.cardPickedList);
+        setUser2Cards(gameRoomState.player2.cardPickedList);
+        setUser1Sum(gameRoomState.player1.cardPickedSum);
+        setUser2Sum(gameRoomState.player2.cardPickedSum);
       }
+    );
+    socketInstance.on(
+      "gameOver",
+      ({ gameRoomState }: { gameRoomState: GameState }) => {
+        console.log("Game Over", gameRoomState);
+        // Handle game over logic here
+      }
+    );
+
+    return () => {
+      socketInstance.disconnect();
+    };
+  }, []);
+  const handleGameEnd = () => {
+    console.log("timer end");
+  };
+
+  const handlePickCard = (cardValue: number) => {
+    const updatedGameState = { ...gameState };
+    updatedGameState.turn = updatedGameState.turn % 2;
+    const currentPlayer = `player${updatedGameState.turn + 1}` as
+      | "player1"
+      | "player2";
+    updatedGameState[currentPlayer].cardPickedSum += cardValue;
+    updatedGameState[currentPlayer].cardPickedList.push(cardValue);
+    updatedGameState[currentPlayer].noOfPlay++;
+    setGameState(updatedGameState); // Update local state
+
+    if (socket && roomId) {
+      socket.emit("pick", updatedGameState, roomId, cardValue);
+    }
+
+    // Update user cards and sums locally
+    if (currentPlayer === "player1") {
+      setUser1Cards([
+        ...user1Cards,
+        { image: cardImages[cardValue - 1].image, value: cardValue },
+      ]);
+      setUser1Sum(user1Sum + cardValue);
+    } else {
+      setUser2Cards([
+        ...user2Cards,
+        { image: cardImages[cardValue - 1].image, value: cardValue },
+      ]);
+      setUser2Sum(user2Sum + cardValue);
     }
   };
-
-  const handleGameEnd = () => {
-    // Perform actions to end the game (e.g., declare a winner)
-    console.log("Game Over!");
-  };
-
   return (
     <>
       <Flex
@@ -135,14 +181,18 @@ const GameRoom: React.FC = () => {
           {shuffledCardImages
             .filter(
               (card) =>
-                !user1Cards.some((userCard) => userCard.image === card.image) &&
-                !user2Cards.some((userCard) => userCard.image === card.image)
+                !user1Cards.some(
+                  (userCard: { image: string }) => userCard.image === card.image
+                ) &&
+                !user2Cards.some(
+                  (userCard: { image: string }) => userCard.image === card.image
+                )
             )
             .map((card, index) => (
               <ClickableCard
+                handlePickCard={handlePickCard}
                 key={index}
                 card={card}
-                onClick={() => handlePickCard(card)}
                 picked={pickedCards.includes(card.image)}
               />
             ))}
@@ -249,11 +299,11 @@ const GameRoom: React.FC = () => {
 
 const ClickableCard: React.FC<{
   card: Card;
-  onClick: () => void;
   picked: boolean;
-}> = ({ card, onClick, picked }) => (
+  handlePickCard: (cardValue: number) => void; // Add handlePickCard prop
+}> = ({ card, picked, handlePickCard }) => (
   <Image
-    onClick={onClick}
+    onClick={() => handlePickCard(card.value)} // Call handlePickCard with card value onClick
     height="6rem"
     src={picked ? card.image : back}
     alt={`Card ${card.value}`}
@@ -330,3 +380,87 @@ const WinnerModal: React.FC<{
 };
 
 export default GameRoom;
+
+// const handlePickCard = (card: Card) => {
+//   socket.emit("pick", card, roomId);
+//   if (currentUser === 1 && user1Cards.length >= MAX_CARDS_PER_USER) {
+//     alert("User 1 has reached the maximum number of cards!");
+//     return;
+//   }
+
+//   if (currentUser === 2 && user2Cards.length >= MAX_CARDS_PER_USER) {
+//     alert("User 2 has reached the maximum number of cards!");
+//     return;
+//   }
+
+//   if (!pickedCards.includes(card.image)) {
+//     const updatedPickedCards = [...pickedCards, card.image];
+//     setPickedCards(updatedPickedCards);
+
+//     if (currentUser === 1) {
+//       setUser1Cards([...user1Cards, card]);
+//       setUser1Sum(user1Sum + card.value);
+//       setCurrentUser(2);
+//       setUser1Timer(false);
+//       setUser2Timer(true);
+//     } else {
+//       setUser2Cards([...user2Cards, card]);
+//       setUser2Sum(user2Sum + card.value);
+//       setCurrentUser(1);
+//       setUser2Timer(false);
+//       setUser1Timer(true);
+//     }
+//   }
+
+//   if (currentUser === 1) {
+//     setGameRoomState(
+//       (prevState: {
+//         player1: { cardPickedList: any; noOfPlay: number };
+//         player2: { noOfPlay: number };
+//         turn: any;
+//       }) => {
+//         const newPlayer1 = {
+//           ...prevState.player1,
+//           cardPickedList: [...prevState.player1.cardPickedList, card],
+//           noOfPlay: prevState.player1.noOfPlay + 1,
+//         };
+
+//         return {
+//           ...prevState,
+//           player1: newPlayer1,
+//           turn:
+//             newPlayer1.noOfPlay === 5
+//               ? (prevState.player2.noOfPlay + 1) % 2
+//               : prevState.turn,
+//         };
+//       }
+//     );
+
+//     socket.emit("pick", gameRoomState, socket.id);
+//   } else {
+//     setGameRoomState(
+//       (prevState: {
+//         player2: { cardPickedList: any; noOfPlay: number };
+//         player1: { noOfPlay: number };
+//         turn: any;
+//       }) => {
+//         const newPlayer2 = {
+//           ...prevState.player2,
+//           cardPickedList: [...prevState.player2.cardPickedList, card],
+//           noOfPlay: prevState.player2.noOfPlay + 1,
+//         };
+
+//         return {
+//           ...prevState,
+//           player2: newPlayer2,
+//           turn:
+//             newPlayer2.noOfPlay === 5
+//               ? (prevState.player1.noOfPlay + 1) % 2
+//               : prevState.turn,
+//         };
+//       }
+//     );
+
+//     socket.emit("pick", gameRoomState, socket.id);
+//   }
+// };

@@ -4,9 +4,14 @@ import DebitCard from "../Minor_Components/DebitCard";
 import PrimaryButton from "../Minor_Components/PrimaryButton";
 import Transactiions from "../Major_Components/Transactiions";
 import { useNavigate } from "react-router-dom";
+// import { useSocket } from "../services/Context/SocketContext";
 
 const DashbordPage = () => {
+  // const socket = useSocket();
   const navigate = useNavigate();
+  const handleJoinGame = () => {
+    navigate("/game");
+  };
   return (
     <Box backgroundColor="#F7F7F7" height="100%" padding=".7rem">
       <Nav />
@@ -18,7 +23,7 @@ const DashbordPage = () => {
           width="100%"
           className="pulse circle orange"
           colorScheme="violet"
-          onClick={() => navigate("/game")}>
+          onClick={handleJoinGame}>
           PLAY GAME
         </Button>
       </Box>

@@ -8,6 +8,7 @@ import PairingPage from "./Pages/PairingPage";
 import ProfilePage from "./Pages/ProfilePage";
 import GameRoom from "./Pages/GameRoom";
 // import AdminDashboard from "./Pages/Admin";
+
 function App() {
   return (
     <>
