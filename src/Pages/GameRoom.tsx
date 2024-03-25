@@ -15,6 +15,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { Socket } from 'socket.io-client';
 
 import Countdown from "react-countdown";
 import one from "../assets/1.svg";
@@ -30,6 +31,10 @@ import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
 
+
+type GameRoomProps = {
+  socket: Socket;
+};
 type Card = {
   image: string;
   value: number;
@@ -79,7 +84,7 @@ type Sum = number;
 const GAME_DURATION = 1200000;
 const TURN_DURATION = 15000; // 5 seconds
 
-const GameRoom = ({ socket }) => {
+const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const navigate = useNavigate();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -140,7 +145,7 @@ const GameRoom = ({ socket }) => {
         socket.disconnect();
       };
     }
-  }, []);
+  }, [socket, navigate]);
   const handleGameEnd = () => {
     console.log("timer end");
   };

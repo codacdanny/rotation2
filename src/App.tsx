@@ -25,11 +25,11 @@ function App() {
     <Routes>
       <Route path="/" element={<SignupPage />} />
       <Route path="login" element={<LoginPage />} />
-      <Route path="dashboard" element={<DashbordPage socket={socket} />} />
+      <Route path="dashboard" element={socket ? <DashbordPage socket={socket} /> : null} />
       <Route path="pickpage" element={<PickPage />} />
       <Route path="pair" element={<PairingPage />} />
       <Route path="profile" element={<ProfilePage />} />
-      <Route path="game" element={<GameRoom socket={socket} />} />
+      <Route path="game" element={socket ? <GameRoom socket={socket} /> : null} />
       {/* <Route path="admin" element={<AdminDashboard />} /> */}
     </Routes>
   );

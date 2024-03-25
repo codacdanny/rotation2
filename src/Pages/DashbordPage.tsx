@@ -4,11 +4,16 @@ import DebitCard from "../Minor_Components/DebitCard";
 import PrimaryButton from "../Minor_Components/PrimaryButton";
 import Transactiions from "../Major_Components/Transactiions";
 import { useNavigate } from "react-router-dom";
+import { Socket } from 'socket.io-client';
 
 // import { useEffect, useState } from "react";
 // import { useSocket } from "../services/Context/SocketContext";
 
-const DashbordPage = ({ socket }) => {
+type DashBoardPageProps = {
+  socket: Socket;
+};
+
+const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
   const navigate = useNavigate();
 
   const handleJoinGame = () => {

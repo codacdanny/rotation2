@@ -138,7 +138,7 @@ const Signup: React.FC = () => {
       );
       console.log(response.data);
       navigate("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error((error as AxiosError).response?.data);
       toast({
         title: "Error",
