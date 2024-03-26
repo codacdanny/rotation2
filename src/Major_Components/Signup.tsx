@@ -136,7 +136,8 @@ const Signup: React.FC = () => {
         "https://rotation2-backend.onrender.com/api/auth/register",
         formData
       );
-      console.log(response.data);
+
+      console.log(response.data.status);
       navigate("/dashboard");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

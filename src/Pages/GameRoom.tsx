@@ -119,7 +119,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       // });
       socket.on("room", (roomId: string) => {
         setRoomId(roomId);
-        console.log(roomId);
+        console.log(`this is the room id ${roomId}`);
       });
 
       socket.on(
