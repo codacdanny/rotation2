@@ -133,7 +133,7 @@ const Signup: React.FC = () => {
     }
     try {
       const response = await axios.post(
-        "https://rotation2-backend.onrender.com/api/user/register",
+        "https://rotation2-backend.onrender.com/api/auth/register",
         formData
       );
       console.log(response.data);

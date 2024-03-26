@@ -15,7 +15,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { Socket } from 'socket.io-client';
+import { Socket } from "socket.io-client";
 
 import Countdown from "react-countdown";
 import one from "../assets/1.svg";
@@ -30,7 +30,6 @@ import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
-
 
 type GameRoomProps = {
   socket: Socket;
@@ -115,11 +114,12 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       socket.on("connect", () => {
         console.log("Connected to server");
       });
-      socket.emit("play");
-
+      // socket.emit("play", () => {
+      //   console.log("playedd");
+      // });
       socket.on("room", (roomId: string) => {
         setRoomId(roomId);
-        console.log("victor no get babe");
+        console.log(roomId);
       });
 
       socket.on(
@@ -142,7 +142,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       );
 
       return () => {
-        socket.disconnect();
+        //DANGER: This should never be called
+        //   socket.disconnect();
       };
     }
   }, [socket, navigate]);

@@ -4,7 +4,7 @@ import DebitCard from "../Minor_Components/DebitCard";
 import PrimaryButton from "../Minor_Components/PrimaryButton";
 import Transactiions from "../Major_Components/Transactiions";
 import { useNavigate } from "react-router-dom";
-import { Socket } from 'socket.io-client';
+import { Socket } from "socket.io-client";
 
 // import { useEffect, useState } from "react";
 // import { useSocket } from "../services/Context/SocketContext";
@@ -22,7 +22,8 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
     socket.emit("play", () => {
       console.log("playedd");
     });
-    navigate("/game"); // Pass socket instance as state to game room
+    console.log("what is here ?");
+    navigate("/game");
   };
   return (
     <Box backgroundColor="#F7F7F7" height="100%" padding=".7rem">

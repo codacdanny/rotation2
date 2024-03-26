@@ -36,7 +36,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://rotation2-backend.onrender.com/api/user/login",
+        "https://rotation2-backend.onrender.com/api/auth/login",
         formData
       );
       console.log(response.data);
