@@ -114,7 +114,9 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const [gameState, setGameState] = useState<GameState>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [gameStateAvailable, setGameStateAvailable] = useState(false);
-  const { isOpen, onClose } = useDisclosure();
+  const [canClick, setCanClick] = useState(true)
+   
+  const { isOpen, onOpen, onClose } = useDisclosure();
   // socket = io(URL);
 
   useEffect(() => {
@@ -139,6 +141,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         "gameRoomUpdate",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
           setGameState(gameRoomState);
+          setCanClick(true);
           console.log(gameRoomState)
          
         }
@@ -148,6 +151,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         ({ gameRoomState }: { gameRoomState: GameState }) => {
 
           console.log("Game Over", gameRoomState);
+          setCanClick(false);
+          onOpen()
           // Handle game over logic here
           
 
@@ -159,7 +164,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         //   socket.disconnect();
       };
     }
-  }, [socket, navigate]);
+  }, [socket, navigate, onOpen]);
   const handleGameEnd = () => {
     console.log("timer end");
   };
@@ -181,7 +186,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
   const handlePickCard = (cardValue: number) => {
     
-    if (getTurn() === getPlayer() && gameState!== null) {
+    if (getTurn() === getPlayer() && gameState!== null && canClick) {
       
       const updatedGameState = { ...gameState };
       updatedGameState.turn = (updatedGameState.turn + 1) % 2;
@@ -198,7 +203,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       updatedGameState[currentPlayer].noOfPlay++;
       if (socket && roomId) {
         socket.emit("pick", updatedGameState, roomId, cardValue);
-       
+       setCanClick(false)
       }
   
      
@@ -353,7 +358,7 @@ const ClickableCard: React.FC<{
     onClick={() => handlePickCard(card.value)} // Call handlePickCard with card value onClick
     height="6rem"
     src={picked ? card.image : back}
-    alt={`Card ${card.value}`}
+    alt={`Card`}
   />
 );
 const TextSumBox: React.FC<{ sum: Sum }> = ({ sum }) => (
