@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import {
   Flex,
   Text,
@@ -90,7 +90,7 @@ const shuffleArray = (array: Card[]) => {
   return array;
 };
 
-const shuffledCardImages: Card[] = shuffleArray(cardImages);
+
 type UserCards = Card[] | string | undefined;
 type Sum = number | string |undefined ;
 
@@ -103,10 +103,11 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const navigate = useNavigate();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [user1Cards, setUser1Cards] = useState<any>([]);
+ 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [user2Cards, setUser2Cards] = useState<any>([]);
-  
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [shuffledCards, setShuffledCards] = useState<any>(shuffleArray(cardImages));
   const [pickedCards] = useState<string[]>([]);
   // const [currentUser, setCurrentUser] = useState<number>(1);
   const [user1Timer] = useState<boolean>(false);
@@ -142,6 +143,18 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       socket.on(
         "gameRoomUpdate",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
+         
+          let player
+  
+          if (gameRoomState.player1.id ===socket.id) {
+            player = 1
+          } else {
+            player = 2
+          }
+          const currentPlayer = player=== 1 ? 'player1' : 'player2'
+          const currentPlayerSelectedCards = gameRoomState[currentPlayer].cardPickedList
+          const newShuffledList = () => shuffledCards.filter(card => !currentPlayerSelectedCards.includes(card.value))
+          setShuffledCards(newShuffledList)
           setGameState(gameRoomState);
           setCanClick(true);
           console.log(gameRoomState)
@@ -166,7 +179,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         //   socket.disconnect();
       };
     }
-  }, [socket, navigate, onOpen]);
+  }, [socket, navigate, onOpen, shuffledCards]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleGameEnd = () => {
     console.log("timer end");
@@ -176,6 +189,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
     return gameState.turn + 1 
     }
 
+    
     const getPlayer = () => {
       let player
       
@@ -186,7 +200,6 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
     }
     return player
     }
-
   const handlePickCard = (cardValue: number) => {
     
     if (getTurn() === getPlayer() && gameState!== null && canClick) {
@@ -197,22 +210,29 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         
       
        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-       const userCards = currentPlayer === 'player1' ? user1Cards : user2Cards;
-       setUser1Cards(user1Cards.filter((card: Card) => card.value !== cardValue));
-       setUser2Cards(user2Cards.filter((card: Card) => card.value !== cardValue));
+      
    
       updatedGameState[currentPlayer].cardPickedSum += cardValue;
       updatedGameState[currentPlayer].cardPickedList.push(cardValue);
       updatedGameState[currentPlayer].noOfPlay++;
+      
       if (socket && roomId) {
         socket.emit("pick", updatedGameState, roomId, cardValue);
        setCanClick(false)
       }
   
      
+      
     }
   };
-
+ const getUser1Cards = () => {
+  
+  
+    return  gameState.player1.cardPickedList.map( i => cardImages.filter(a => a.value === i)[0])
+ }
+ const getUser2Cards = () => {
+  return   gameState.player2.cardPickedList.map( i => cardImages.filter(a => a.value === i)[0])
+}
   const player1CardPickedSum = gameState?.player1?.cardPickedSum ?? 0;
   const player2CardPickedSum = gameState?.player2?.cardPickedSum ?? 0;
   return (
@@ -229,16 +249,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         justifyContent="space-between"
         width="100%">
         <Flex alignItems="start" justifyContent="space-evenly" wrap="wrap">
-          {shuffledCardImages
-            .filter(
-              (card) =>
-                !user1Cards.some(
-                  (userCard: { image: string }) => userCard.image === card.image
-                ) &&
-                !user2Cards.some(
-                  (userCard: { image: string }) => userCard.image === card.image
-                )
-            )
+        {shuffledCards
             .map((card, index) => (
               <ClickableCard
                 handlePickCard={handlePickCard}
@@ -312,7 +323,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
           </Flex>
 
           <Flex justifyContent="space-between" alignItems="center">
-            <UserBox profile={profile} cards={user1Cards} name="User1" />
+            <UserBox profile={profile} cards={getUser1Cards()} name="User1" />
             {/* <Box paddingX=".7rem">
               <Countdown
                 date={startTime + GAME_DURATION}
@@ -334,7 +345,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
               />
             </Box> */}
 
-            <UserBox profile={profile} cards={user2Cards} name="User2" />
+            <UserBox profile={profile} cards={getUser2Cards()} name="User2" />
           </Flex>
         </Flex>
       </Flex>
@@ -380,21 +391,22 @@ const UserBox: React.FC<{
   cards: UserCards;
   name: string;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-}> = ({ profile, cards, name }) => (
+}> = ({ profile, cards, name }) =>  (
   <Flex width="40%" gap=".5rem" alignItems="center">
     <Flex flexDirection="column" gap=".2rem" textAlign="center">
       <Image src={profile} height="4rem" alt={`${name}'s Image`} />
       <Text>{name}</Text>
     </Flex>
     <Flex overflowX="scroll" gap=".2rem">
-      {/* {cards && cards.map((card, index) => (
+      {cards && (cards as Card[]).map((card, index) =>   (
+
         <Image
           key={index}
           src={card.image}
           alt={`Card ${index + 1}`}
           height="6rem"
         />
-      ))} */}
+      ))} 
     </Flex>
   </Flex>
 );
