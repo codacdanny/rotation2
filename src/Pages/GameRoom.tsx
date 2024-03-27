@@ -95,6 +95,7 @@ type UserCards = Card[] | string | undefined;
 type Sum = number | string |undefined ;
 
 // const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const GAME_DURATION = 1200000;
 const TURN_DURATION = 15000; // 5 seconds
 
@@ -110,6 +111,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   // const [currentUser, setCurrentUser] = useState<number>(1);
   const [user1Timer] = useState<boolean>(false);
   const [user2Timer] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [startTime] = useState<number>(Date.now());
   const [gameState, setGameState] = useState<GameState>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
@@ -165,6 +167,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       };
     }
   }, [socket, navigate, onOpen]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleGameEnd = () => {
     console.log("timer end");
   };
@@ -310,7 +313,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
           <Flex justifyContent="space-between" alignItems="center">
             <UserBox profile={profile} cards={user1Cards} name="User1" />
-            <Box paddingX=".7rem">
+            {/* <Box paddingX=".7rem">
               <Countdown
                 date={startTime + GAME_DURATION}
                 onComplete={handleGameEnd}
@@ -329,7 +332,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
                   </Flex>
                 )}
               />
-            </Box>
+            </Box> */}
 
             <UserBox profile={profile} cards={user2Cards} name="User2" />
           </Flex>
