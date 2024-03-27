@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {  useEffect, useState } from "react";
 import {
   Flex,
@@ -90,7 +91,8 @@ const shuffleArray = (array: Card[]) => {
   return array;
 };
 
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+let shuffledCardImages: Card[]
 type UserCards = Card[] | string | undefined;
 type Sum = number | string |undefined ;
 
@@ -103,9 +105,9 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const navigate = useNavigate();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
- 
+  const [user1Cards, setUser1Cards] = useState<any>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
+  const [user2Cards, setUser2Cards] = useState<any>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [shuffledCards, setShuffledCards] = useState<any>(shuffleArray(cardImages));
   const [pickedCards] = useState<string[]>([]);
@@ -226,13 +228,19 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
     }
   };
  const getUser1Cards = () => {
-  
-  
-    return  gameState.player1.cardPickedList.map( i => cardImages.filter(a => a.value === i)[0])
+  if(gameState){
+
+    return  gameState?.player1?.cardPickedList.map( i => cardImages.filter(a => a.value === i)[0])
+  }
+  return
  }
  const getUser2Cards = () => {
-  return   gameState.player2.cardPickedList.map( i => cardImages.filter(a => a.value === i)[0])
-}
+  if (gameState){
+
+    return   gameState?.player2?.cardPickedList.map( i => cardImages.filter(a => a.value === i)[0])
+  }
+  return
+  }
   const player1CardPickedSum = gameState?.player1?.cardPickedSum ?? 0;
   const player2CardPickedSum = gameState?.player2?.cardPickedSum ?? 0;
   return (
