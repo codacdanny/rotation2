@@ -137,7 +137,7 @@ const Signup: React.FC = () => {
         formData
       );
 
-      console.log(response.data.status);
+      localStorage.setItem('token', response.data.data.token);
       navigate("/dashboard");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

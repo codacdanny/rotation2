@@ -20,15 +20,18 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
   const [userDetails, setUserDetails] = useState(null);
   
   useEffect(() => {
-    axios.get('http://localhost:5000/api/user/my-details')
-      .then(response => {
-        setUserDetails(response.data.data);
-        console.log(userDetails)
-      })
+    
+    // const token = localStorage.getItem('token');
+
+    // Include the token in the request headers
+    axios.get('https://rotation2-backend.onrender.com/api/user/my-details').then(response => {
+      setUserDetails(response.data.data);
+      console.log(userDetails)
+    })
       .catch(error => {
         console.error('There was an error!', error);
       });
-  }, []);
+  }, [userDetails]);
 
   const handleJoinGame = () => {
     if (socket) console.log("huraayyy");

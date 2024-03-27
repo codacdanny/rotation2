@@ -38,8 +38,23 @@ type Card = {
   image: string;
   value: number;
 };
-type GameState = null | {
+// type GameState = null | {
  
+//   turn: number;
+//   player1: {
+//     id: string;
+//     cardPickedList: number[];
+//     cardPickedSum: number;
+//     noOfPlay: number;
+//   };
+//   player2: {
+//     id: string;
+//     cardPickedList: number[];
+//     cardPickedSum: number;
+//     noOfPlay: number;
+//   };
+// };
+type GameState = {
   turn: number;
   player1: {
     id: string;
@@ -47,14 +62,13 @@ type GameState = null | {
     cardPickedSum: number;
     noOfPlay: number;
   };
-  player2: {
+  player2?: { // Make player2 optional since it's initialized later
     id: string;
     cardPickedList: number[];
     cardPickedSum: number;
     noOfPlay: number;
   };
 };
-
 const cardImages: Card[] = [
   { image: one, value: 10 },
   { image: two, value: 2 },
@@ -77,8 +91,8 @@ const shuffleArray = (array: Card[]) => {
 };
 
 const shuffledCardImages: Card[] = shuffleArray(cardImages);
-type UserCards = Card[];
-type Sum = number;
+type UserCards = Card[] | string | undefined;
+type Sum = number | string |undefined ;
 
 // const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
 const GAME_DURATION = 1200000;
@@ -91,8 +105,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const [user1Cards, setUser1Cards] = useState<any>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [user2Cards, setUser2Cards] = useState<any>([]);
-  const [user1Sum, setUser1Sum] = useState<Sum>(0);
-  const [user2Sum, setUser2Sum] = useState<Sum>(0);
+  
   const [pickedCards] = useState<string[]>([]);
   // const [currentUser, setCurrentUser] = useState<number>(1);
   const [user1Timer] = useState<boolean>(false);
@@ -100,6 +113,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const [startTime] = useState<number>(Date.now());
   const [gameState, setGameState] = useState<GameState>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
+  const [gameStateAvailable, setGameStateAvailable] = useState(false);
   const { isOpen, onClose } = useDisclosure();
   // socket = io(URL);
 
@@ -112,12 +126,12 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       socket.on("connect", () => {
         console.log("Connected to server");
       });
-      // socket.emit("play", () => {
-      //   console.log("playedd");
-      // });
+     
       socket.on("room", (roomId: string, gameState: GameState) => {
         setRoomId(roomId);
         setGameState(gameState);
+        console.log(gameState)
+        setGameStateAvailable(true); 
         console.log(`this is the room id ${gameState}`);
       });
 
@@ -125,11 +139,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         "gameRoomUpdate",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
           setGameState(gameRoomState);
-          // Update user cards and sums when game state is received
-          // setUser1Cards(gameRoomState.player1.cardPickedList);
-          // setUser2Cards(gameRoomState.player2.cardPickedList);
-          // setUser1Sum(gameRoomState.player1.cardPickedSum);
-          // setUser2Sum(gameRoomState.player2.cardPickedSum);
+          console.log(gameRoomState)
+         
         }
       );
       socket.on(
@@ -138,7 +149,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
           console.log("Game Over", gameRoomState);
           // Handle game over logic here
-          //navigate('/dashboard')
+          
 
         }
       );
@@ -159,7 +170,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
     const getPlayer = () => {
       let player
-      console.log(gameState)
+      
     if (gameState.player1.id ===socket.id) {
       player = 1
     } else {
@@ -169,45 +180,39 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
     }
 
   const handlePickCard = (cardValue: number) => {
-    console.log(gameState)
+    
     if (getTurn() === getPlayer() && gameState!== null) {
       
       const updatedGameState = { ...gameState };
       updatedGameState.turn = (updatedGameState.turn + 1) % 2;
       const currentPlayer = getPlayer() === 1 ? 'player1' : 'player2'
         
+      
+       // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       const userCards = currentPlayer === 'player1' ? user1Cards : user2Cards;
+       setUser1Cards(user1Cards.filter((card: Card) => card.value !== cardValue));
+       setUser2Cards(user2Cards.filter((card: Card) => card.value !== cardValue));
+   
       updatedGameState[currentPlayer].cardPickedSum += cardValue;
       updatedGameState[currentPlayer].cardPickedList.push(cardValue);
       updatedGameState[currentPlayer].noOfPlay++;
-      // Update local state
-  
       if (socket && roomId) {
         socket.emit("pick", updatedGameState, roomId, cardValue);
-        
+       
       }
   
-      // Update user cards and sums locally
-      // if (cardValue >= 1 && cardValue <= cardImages.length) {
-      //   if (currentPlayer === "player1") {
-      //     setUser1Cards([
-      //       ...user1Cards,
-      //       { image: cardImages[cardValue - 1].image, value: cardValue },
-      //     ]);
-      //     setUser1Sum(user1Sum + cardValue);
-      //   } else {
-      //     setUser2Cards([
-      //       ...user2Cards,
-      //       { image: cardImages[cardValue - 1].image, value: cardValue },
-      //     ]);
-      //     setUser2Sum(user2Sum + cardValue);
-      //   }
-      // } else {
-      //   console.error("Invalid card value:", cardValue);
-      // }
+     
     }
   };
+
+  const player1CardPickedSum = gameState?.player1?.cardPickedSum ?? 0;
+  const player2CardPickedSum = gameState?.player2?.cardPickedSum ?? 0;
   return (
     <>
+    {gameStateAvailable? (
+      <Box>
+
+    
       <Flex
         flexDirection="column"
         backgroundColor="rgba(107, 57, 189, .65)"
@@ -294,8 +299,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         </Flex>
         <Flex flexDirection="column" gap="1rem">
           <Flex justifyContent="space-between" width="100%">
-            <TextSumBox sum={user2Sum} />
-            <TextSumBox sum={user2Sum} />
+            <TextSumBox sum={player1CardPickedSum} />
+            <TextSumBox sum={player2CardPickedSum} />
           </Flex>
 
           <Flex justifyContent="space-between" alignItems="center">
@@ -328,9 +333,13 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       <WinnerModal
         isOpen={isOpen}
         onClose={onClose}
-        user1Sum={user1Sum}
-        user2Sum={user2Sum}
+        player1CardPickedSum={player1CardPickedSum}
+        player2CardPickedSum={player2CardPickedSum}
       />
+      </Box>
+    ) : (
+      <Text>Loading</Text>
+      )}
     </>
   );
 };
@@ -362,6 +371,7 @@ const UserBox: React.FC<{
   profile: string;
   cards: UserCards;
   name: string;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 }> = ({ profile, cards, name }) => (
   <Flex width="40%" gap=".5rem" alignItems="center">
     <Flex flexDirection="column" gap=".2rem" textAlign="center">
@@ -369,14 +379,14 @@ const UserBox: React.FC<{
       <Text>{name}</Text>
     </Flex>
     <Flex overflowX="scroll" gap=".2rem">
-      {cards.map((card, index) => (
+      {/* {cards && cards.map((card, index) => (
         <Image
           key={index}
           src={card.image}
           alt={`Card ${index + 1}`}
           height="6rem"
         />
-      ))}
+      ))} */}
     </Flex>
   </Flex>
 );
@@ -384,17 +394,18 @@ const UserBox: React.FC<{
 const WinnerModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
-  user1Sum: Sum;
-  user2Sum: Sum;
-}> = ({ isOpen, onClose, user1Sum, user2Sum }) => {
+  player1CardPickedSum: Sum;
+  player2CardPickedSum: Sum;
+}> = ({ isOpen, onClose, player1CardPickedSum, player2CardPickedSum }) => {
   let winner;
-  if (user1Sum > user2Sum) {
+  if (player1CardPickedSum > player2CardPickedSum) {
     winner = "User1";
-  } else if (user1Sum < user2Sum) {
+  } else if (player1CardPickedSum < player2CardPickedSum) {
     winner = "User2";
   } else {
     winner = "It's a tie!";
   }
+  const navigate = useNavigate()
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -405,12 +416,12 @@ const WinnerModal: React.FC<{
         <ModalBody pb={6}>
           <Flex flexDirection="column" gap=".5rem">
             <Text> THE WINNER IS {winner} </Text>
-            <Text>{winner === "User1" ? user1Sum : user2Sum}</Text>
+            <Text>{winner === "User1" ? player1CardPickedSum : player2CardPickedSum}</Text>
           </Flex>
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={onClose}>Close</Button>
+          <Button onClick={() => navigate('/dashboard')}>Close</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

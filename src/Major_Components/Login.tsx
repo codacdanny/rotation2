@@ -39,7 +39,7 @@ const Login: React.FC = () => {
         "https://rotation2-backend.onrender.com/api/auth/login",
         formData
       );
-      console.log(response.data);
+      localStorage.setItem('token', response.data.data.token);
       navigate("/dashboard");
     } catch (error) {
       console.error((error as AxiosError).response?.data);
