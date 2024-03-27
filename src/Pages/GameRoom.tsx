@@ -38,7 +38,8 @@ type Card = {
   image: string;
   value: number;
 };
-type GameState = {
+type GameState = null | {
+ 
   turn: number;
   player1: {
     id: string;
@@ -97,17 +98,14 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const [user1Timer] = useState<boolean>(false);
   const [user2Timer] = useState<boolean>(false);
   const [startTime] = useState<number>(Date.now());
-  const [gameState, setGameState] = useState<GameState>({
-    turn: 0,
-    player1: { id: "", cardPickedList: [], cardPickedSum: 0, noOfPlay: 0 },
-    player2: { id: "", cardPickedList: [], cardPickedSum: 0, noOfPlay: 0 },
-  });
+  const [gameState, setGameState] = useState<GameState>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const { isOpen, onClose } = useDisclosure();
   // socket = io(URL);
 
   useEffect(() => {
     // socket = io(URL);
+    
     if (!socket) {
       navigate("/dashboard");
     } else {
@@ -117,9 +115,10 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       // socket.emit("play", () => {
       //   console.log("playedd");
       // });
-      socket.on("room", (roomId: string) => {
+      socket.on("room", (roomId: string, gameState: GameState) => {
         setRoomId(roomId);
-        console.log(`this is the room id ${roomId}`);
+        setGameState(gameState);
+        console.log(`this is the room id ${gameState}`);
       });
 
       socket.on(
@@ -127,17 +126,20 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         ({ gameRoomState }: { gameRoomState: GameState }) => {
           setGameState(gameRoomState);
           // Update user cards and sums when game state is received
-          setUser1Cards(gameRoomState.player1.cardPickedList);
-          setUser2Cards(gameRoomState.player2.cardPickedList);
-          setUser1Sum(gameRoomState.player1.cardPickedSum);
-          setUser2Sum(gameRoomState.player2.cardPickedSum);
+          // setUser1Cards(gameRoomState.player1.cardPickedList);
+          // setUser2Cards(gameRoomState.player2.cardPickedList);
+          // setUser1Sum(gameRoomState.player1.cardPickedSum);
+          // setUser2Sum(gameRoomState.player2.cardPickedSum);
         }
       );
       socket.on(
         "gameOver",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
+
           console.log("Game Over", gameRoomState);
           // Handle game over logic here
+          //navigate('/dashboard')
+
         }
       );
 
@@ -151,38 +153,57 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
     console.log("timer end");
   };
 
-  const handlePickCard = (cardValue: number) => {
-    const updatedGameState = { ...gameState };
-    updatedGameState.turn = updatedGameState.turn % 2;
-    const currentPlayer = `player${updatedGameState.turn + 1}` as
-      | "player1"
-      | "player2";
-    updatedGameState[currentPlayer].cardPickedSum += cardValue;
-    updatedGameState[currentPlayer].cardPickedList.push(cardValue);
-    updatedGameState[currentPlayer].noOfPlay++;
-    setGameState(updatedGameState); // Update local state
-
-    if (socket && roomId) {
-      socket.emit("pick", updatedGameState, roomId, cardValue);
+  const getTurn = () =>{
+    return gameState.turn + 1 
     }
 
-    // Update user cards and sums locally
-    if (cardValue >= 1 && cardValue <= cardImages.length) {
-      if (currentPlayer === "player1") {
-        setUser1Cards([
-          ...user1Cards,
-          { image: cardImages[cardValue - 1].image, value: cardValue },
-        ]);
-        setUser1Sum(user1Sum + cardValue);
-      } else {
-        setUser2Cards([
-          ...user2Cards,
-          { image: cardImages[cardValue - 1].image, value: cardValue },
-        ]);
-        setUser2Sum(user2Sum + cardValue);
-      }
+    const getPlayer = () => {
+      let player
+      console.log(gameState)
+    if (gameState.player1.id ===socket.id) {
+      player = 1
     } else {
-      console.error("Invalid card value:", cardValue);
+      player = 2
+    }
+    return player
+    }
+
+  const handlePickCard = (cardValue: number) => {
+    console.log(gameState)
+    if (getTurn() === getPlayer() && gameState!== null) {
+      
+      const updatedGameState = { ...gameState };
+      updatedGameState.turn = (updatedGameState.turn + 1) % 2;
+      const currentPlayer = getPlayer() === 1 ? 'player1' : 'player2'
+        
+      updatedGameState[currentPlayer].cardPickedSum += cardValue;
+      updatedGameState[currentPlayer].cardPickedList.push(cardValue);
+      updatedGameState[currentPlayer].noOfPlay++;
+      // Update local state
+  
+      if (socket && roomId) {
+        socket.emit("pick", updatedGameState, roomId, cardValue);
+        
+      }
+  
+      // Update user cards and sums locally
+      // if (cardValue >= 1 && cardValue <= cardImages.length) {
+      //   if (currentPlayer === "player1") {
+      //     setUser1Cards([
+      //       ...user1Cards,
+      //       { image: cardImages[cardValue - 1].image, value: cardValue },
+      //     ]);
+      //     setUser1Sum(user1Sum + cardValue);
+      //   } else {
+      //     setUser2Cards([
+      //       ...user2Cards,
+      //       { image: cardImages[cardValue - 1].image, value: cardValue },
+      //     ]);
+      //     setUser2Sum(user2Sum + cardValue);
+      //   }
+      // } else {
+      //   console.error("Invalid card value:", cardValue);
+      // }
     }
   };
   return (
@@ -273,7 +294,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         </Flex>
         <Flex flexDirection="column" gap="1rem">
           <Flex justifyContent="space-between" width="100%">
-            <TextSumBox sum={user1Sum} />
+            <TextSumBox sum={user2Sum} />
             <TextSumBox sum={user2Sum} />
           </Flex>
 

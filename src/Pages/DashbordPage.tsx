@@ -1,10 +1,12 @@
+import {useState, useEffect} from 'react'
 import { Box, Button, Flex } from "@chakra-ui/react";
 import Nav from "../Minor_Components/Nav";
 import DebitCard from "../Minor_Components/DebitCard";
 import PrimaryButton from "../Minor_Components/PrimaryButton";
 import Transactiions from "../Major_Components/Transactiions";
 import { useNavigate } from "react-router-dom";
-import { Socket } from "socket.io-client";
+import { Socket } from 'socket.io-client';
+import axios from 'axios';
 
 // import { useEffect, useState } from "react";
 // import { useSocket } from "../services/Context/SocketContext";
@@ -15,6 +17,18 @@ type DashBoardPageProps = {
 
 const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
   const navigate = useNavigate();
+  const [userDetails, setUserDetails] = useState(null);
+  
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/user/my-details')
+      .then(response => {
+        setUserDetails(response.data.data);
+        console.log(userDetails)
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+      });
+  }, []);
 
   const handleJoinGame = () => {
     if (socket) console.log("huraayyy");
@@ -22,8 +36,7 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
     socket.emit("play", () => {
       console.log("playedd");
     });
-    console.log("what is here ?");
-    navigate("/game");
+    navigate("/game"); // Pass socket instance as state to game room
   };
   return (
     <Box backgroundColor="#F7F7F7" height="100%" padding=".7rem">
