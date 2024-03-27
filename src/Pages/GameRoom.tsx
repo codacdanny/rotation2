@@ -198,18 +198,25 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       
        // eslint-disable-next-line @typescript-eslint/no-unused-vars
        const userCards = currentPlayer === 'player1' ? user1Cards : user2Cards;
+       const updatedUserCards = userCards.filter((card) => card.value !== cardValue);
        setUser1Cards(user1Cards.filter((card: Card) => card.value !== cardValue));
        setUser2Cards(user2Cards.filter((card: Card) => card.value !== cardValue));
    
       updatedGameState[currentPlayer].cardPickedSum += cardValue;
       updatedGameState[currentPlayer].cardPickedList.push(cardValue);
       updatedGameState[currentPlayer].noOfPlay++;
+      
       if (socket && roomId) {
         socket.emit("pick", updatedGameState, roomId, cardValue);
        setCanClick(false)
       }
   
      
+      if (currentPlayer === 'player1') {
+        setUser1Cards(updatedUserCards);
+      } else {
+        setUser2Cards(updatedUserCards);
+      }
     }
   };
 
@@ -230,15 +237,15 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         width="100%">
         <Flex alignItems="start" justifyContent="space-evenly" wrap="wrap">
           {shuffledCardImages
-            .filter(
-              (card) =>
-                !user1Cards.some(
-                  (userCard: { image: string }) => userCard.image === card.image
-                ) &&
-                !user2Cards.some(
-                  (userCard: { image: string }) => userCard.image === card.image
-                )
-            )
+            // .filter(
+            //   (card) => 
+            //     !user1Cards.some(
+            //       (userCard: { image: string }) => userCard.image === card.image
+            //     ) &&
+            //     !user2Cards.some(
+            //       (userCard: { image: string }) => userCard.image === card.image
+            //     )
+            // )
             .map((card, index) => (
               <ClickableCard
                 handlePickCard={handlePickCard}
@@ -380,21 +387,22 @@ const UserBox: React.FC<{
   cards: UserCards;
   name: string;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-}> = ({ profile, cards, name }) => (
+}> = ({ profile, cards, name }) => console.log(cards)|| (
   <Flex width="40%" gap=".5rem" alignItems="center">
     <Flex flexDirection="column" gap=".2rem" textAlign="center">
       <Image src={profile} height="4rem" alt={`${name}'s Image`} />
       <Text>{name}</Text>
     </Flex>
     <Flex overflowX="scroll" gap=".2rem">
-      {/* {cards && cards.map((card, index) => (
+      {cards && (cards as Card[]).map((card, index) =>   (
+
         <Image
           key={index}
           src={card.image}
           alt={`Card ${index + 1}`}
           height="6rem"
         />
-      ))} */}
+      ))} 
     </Flex>
   </Flex>
 );
