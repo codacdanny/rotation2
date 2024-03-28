@@ -39,22 +39,7 @@ type Card = {
   image: string;
   value: number;
 };
-// type GameState = null | {
- 
-//   turn: number;
-//   player1: {
-//     id: string;
-//     cardPickedList: number[];
-//     cardPickedSum: number;
-//     noOfPlay: number;
-//   };
-//   player2: {
-//     id: string;
-//     cardPickedList: number[];
-//     cardPickedSum: number;
-//     noOfPlay: number;
-//   };
-// };
+
 type GameState = {
   turn: number;
   player1: {
