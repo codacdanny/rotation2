@@ -18,6 +18,7 @@ type FormData = {
 };
 
 const Login: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     phoneNumber: "",
     password: "",
@@ -35,6 +36,7 @@ const Login: React.FC = () => {
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await axios.post(
         "https://rotation2-backend.onrender.com/api/auth/login",
         formData
@@ -42,6 +44,7 @@ const Login: React.FC = () => {
       localStorage.setItem("token", response.data.data.token);
       navigate("/dashboard");
     } catch (error) {
+      setLoading(false);
       console.error((error as AxiosError).response?.data);
       toast({
         title: "Error",
@@ -97,6 +100,7 @@ const Login: React.FC = () => {
         </Flex>
         <Box textAlign="center">
           <Button
+            isLoading={loading}
             type="submit"
             borderRadius="30px"
             width="fit-content"

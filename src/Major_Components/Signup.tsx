@@ -68,6 +68,7 @@ const statesInNigeria: string[] = [
 const Signup: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     email: "",
     phoneNumber: "",
@@ -90,6 +91,7 @@ const Signup: React.FC = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+
     if (
       formData.referralID !== "dualmainRC" &&
       formData.referralID !== "monomainRC"
@@ -127,6 +129,7 @@ const Signup: React.FC = () => {
       return;
     }
     try {
+      setLoading(true);
       const response = await axios.post(
         "https://rotation2-backend.onrender.com/api/auth/register",
         formData
@@ -134,8 +137,10 @@ const Signup: React.FC = () => {
 
       localStorage.setItem("token", response.data.data.token);
       navigate("/dashboard");
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      setLoading(false);
       console.error((error as AxiosError).response?.data);
       toast({
         title: "Error",
@@ -230,8 +235,8 @@ const Signup: React.FC = () => {
         </Flex>
 
         <Box textAlign="center">
-          {/* <AuthButton buttonText="Sign Up" /> */}
           <Button
+            isLoading={loading}
             type="submit"
             borderRadius="30px"
             width="fit-content"
@@ -239,7 +244,6 @@ const Signup: React.FC = () => {
             padding="1rem 2.5rem"
             backgroundColor="#6B39BD"
             color="#F7F7F7"
-            // onClick={() => navigate("/dashboard")}
             _hover={{
               backgroundColor: "#6B39BD",
             }}
