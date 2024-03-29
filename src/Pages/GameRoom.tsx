@@ -54,7 +54,7 @@ type GameState = {
     cardPickedSum: number;
     noOfPlay: number;
   };
-};
+} | null;
 const cardImages: Card[] = [
   { image: one, value: 10 },
   { image: two, value: 2 },
@@ -89,10 +89,7 @@ const TURN_DURATION = 15000; // 5 seconds
 const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const navigate = useNavigate();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [user1Cards, setUser1Cards] = useState<any>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [user2Cards, setUser2Cards] = useState<any>([]);
+ 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [shuffledCards, setShuffledCards] = useState<any>(shuffleArray(cardImages));
   const [pickedCards] = useState<string[]>([]);
