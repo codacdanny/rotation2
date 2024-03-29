@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Flex,
   Text,
@@ -48,7 +48,8 @@ type GameState = {
     cardPickedSum: number;
     noOfPlay: number;
   };
-  player2?: { // Make player2 optional since it's initialized later
+  player2?: {
+    // Make player2 optional since it's initialized later
     id: string;
     cardPickedList: number[];
     cardPickedSum: number;
@@ -77,9 +78,9 @@ const shuffleArray = (array: Card[]) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-let shuffledCardImages: Card[]
+let shuffledCardImages: Card[];
 type UserCards = Card[] | string | undefined;
-type Sum = number | string |undefined ;
+type Sum = number | string | undefined;
 
 // const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -89,72 +90,71 @@ const TURN_DURATION = 15000; // 5 seconds
 const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const navigate = useNavigate();
 
- 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [shuffledCards, setShuffledCards] = useState<any>(shuffleArray(cardImages));
+  const [shuffledCards, setShuffledCards] = useState<any>(
+    shuffleArray(cardImages)
+  );
   const [pickedCards] = useState<string[]>([]);
   // const [currentUser, setCurrentUser] = useState<number>(1);
   const [user1Timer] = useState<boolean>(false);
   const [user2Timer] = useState<boolean>(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [startTime] = useState<number>(Date.now());
+  // const [startTime] = useState<number>(Date.now());
   const [gameState, setGameState] = useState<GameState>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [gameStateAvailable, setGameStateAvailable] = useState(false);
-  const [canClick, setCanClick] = useState(true)
-   
+  const [canClick, setCanClick] = useState(true);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   // socket = io(URL);
 
   useEffect(() => {
     // socket = io(URL);
-    
+
     if (!socket) {
       navigate("/dashboard");
     } else {
       socket.on("connect", () => {
         console.log("Connected to server");
       });
-     
+
       socket.on("room", (roomId: string, gameState: GameState) => {
         setRoomId(roomId);
         setGameState(gameState);
-        console.log(gameState)
-        setGameStateAvailable(true); 
+        console.log(gameState);
+        setGameStateAvailable(true);
         console.log(`this is the room id ${gameState}`);
       });
 
       socket.on(
         "gameRoomUpdate",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
-         
-          let player
-  
-          if (gameRoomState.player1.id ===socket.id) {
-            player = 1
+          let player;
+
+          if (gameRoomState.player1.id === socket.id) {
+            player = 1;
           } else {
-            player = 2
+            player = 2;
           }
-          const currentPlayer = player=== 1 ? 'player1' : 'player2'
-          const currentPlayerSelectedCards = gameRoomState[currentPlayer].cardPickedList
-          const newShuffledList = () => shuffledCards.filter(card => !currentPlayerSelectedCards.includes(card.value))
-          setShuffledCards(newShuffledList)
+          const currentPlayer = player === 1 ? "player1" : "player2";
+          const currentPlayerSelectedCards =
+            gameRoomState[currentPlayer].cardPickedList;
+          const newShuffledList = () =>
+            shuffledCards.filter(
+              (card) => !currentPlayerSelectedCards.includes(card.value)
+            );
+          setShuffledCards(newShuffledList);
           setGameState(gameRoomState);
           setCanClick(true);
-          console.log(gameRoomState)
-         
+          console.log(gameRoomState);
         }
       );
       socket.on(
         "gameOver",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
-
           console.log("Game Over", gameRoomState);
           setCanClick(false);
-          onOpen()
+          onOpen();
           // Handle game over logic here
-          
-
         }
       );
 
@@ -169,152 +169,147 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
     console.log("timer end");
   };
 
-  const getTurn = () =>{
-    return gameState.turn + 1 
-    }
+  const getTurn = () => {
+    return gameState.turn + 1;
+  };
 
-    
-    const getPlayer = () => {
-      let player
-      
-    if (gameState.player1.id ===socket.id) {
-      player = 1
+  const getPlayer = () => {
+    let player;
+
+    if (gameState.player1.id === socket.id) {
+      player = 1;
     } else {
-      player = 2
+      player = 2;
     }
-    return player
-    }
+    return player;
+  };
   const handlePickCard = (cardValue: number) => {
-    
-    if (getTurn() === getPlayer() && gameState!== null && canClick) {
-      
+    if (getTurn() === getPlayer() && gameState !== null && canClick) {
       const updatedGameState = { ...gameState };
       updatedGameState.turn = (updatedGameState.turn + 1) % 2;
-      const currentPlayer = getPlayer() === 1 ? 'player1' : 'player2'
-        
-      
-       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      
-   
+      const currentPlayer = getPlayer() === 1 ? "player1" : "player2";
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       updatedGameState[currentPlayer].cardPickedSum += cardValue;
       updatedGameState[currentPlayer].cardPickedList.push(cardValue);
       updatedGameState[currentPlayer].noOfPlay++;
-      
+
       if (socket && roomId) {
         socket.emit("pick", updatedGameState, roomId, cardValue);
-       setCanClick(false)
+        setCanClick(false);
       }
-  
-     
-      
     }
   };
- const getUser1Cards = () => {
-  if(gameState){
-
-    return  gameState?.player1?.cardPickedList.map( i => cardImages.filter(a => a.value === i)[0])
-  }
-  return
- }
- const getUser2Cards = () => {
-  if (gameState){
-
-    return   gameState?.player2?.cardPickedList.map( i => cardImages.filter(a => a.value === i)[0])
-  }
-  return
-  }
+  const getUser1Cards = () => {
+    if (gameState) {
+      return gameState?.player1?.cardPickedList.map(
+        (i) => cardImages.filter((a) => a.value === i)[0]
+      );
+    }
+    return;
+  };
+  const getUser2Cards = () => {
+    if (gameState) {
+      return gameState?.player2?.cardPickedList.map(
+        (i) => cardImages.filter((a) => a.value === i)[0]
+      );
+    }
+    return;
+  };
   const player1CardPickedSum = gameState?.player1?.cardPickedSum ?? 0;
   const player2CardPickedSum = gameState?.player2?.cardPickedSum ?? 0;
   return (
     <>
-    {gameStateAvailable? (
-      <Box>
-
-    
-      <Flex
-        flexDirection="column"
-        backgroundColor="rgba(107, 57, 189, .65)"
-        height="100vh"
-        padding="1.5rem 1rem"
-        justifyContent="space-between"
-        width="100%">
-        <Flex alignItems="start" justifyContent="space-evenly" wrap="wrap">
-        {shuffledCards
-            .map((card, index) => (
-              <ClickableCard
-                handlePickCard={handlePickCard}
-                key={index}
-                card={card}
-                picked={pickedCards.includes(card.image)}
-              />
-            ))}
-        </Flex>
-        <Flex margin="0 auto" alignItems="center">
-          {user1Timer && (
-            <Countdown
-              date={Date.now() + TURN_DURATION}
-              onComplete={() => {}}
-              renderer={({ seconds }) => (
-                <Text fontSize="1rem">
-                  <span
-                    style={{
-                      fontWeight: "900",
-                      fontSize: "1.2rem",
-                    }}>
-                    User1
-                  </span>{" "}
-                  you have{" "}
-                  <span
-                    style={{
-                      fontWeight: "600",
-                      fontSize: "1.2rem",
-                      color: "tomato",
-                    }}>
-                    {seconds}
-                  </span>{" "}
-                  seconds to pick a card
-                </Text>
+      {gameStateAvailable ? (
+        <Box>
+          <Flex
+            flexDirection="column"
+            backgroundColor="rgba(107, 57, 189, .65)"
+            height="100vh"
+            padding="1.5rem 1rem"
+            justifyContent="space-between"
+            width="100%">
+            <Flex alignItems="start" justifyContent="space-evenly" wrap="wrap">
+              {shuffledCards.map((card, index) => (
+                <ClickableCard
+                  handlePickCard={handlePickCard}
+                  key={index}
+                  card={card}
+                  picked={pickedCards.includes(card.image)}
+                />
+              ))}
+            </Flex>
+            <Flex margin="0 auto" alignItems="center">
+              {user1Timer && (
+                <Countdown
+                  date={Date.now() + TURN_DURATION}
+                  onComplete={() => {}}
+                  renderer={({ seconds }) => (
+                    <Text fontSize="1rem">
+                      <span
+                        style={{
+                          fontWeight: "900",
+                          fontSize: "1.2rem",
+                        }}>
+                        User1
+                      </span>{" "}
+                      you have{" "}
+                      <span
+                        style={{
+                          fontWeight: "600",
+                          fontSize: "1.2rem",
+                          color: "tomato",
+                        }}>
+                        {seconds}
+                      </span>{" "}
+                      seconds to pick a card
+                    </Text>
+                  )}
+                />
               )}
-            />
-          )}
-          {user2Timer && (
-            <Countdown
-              date={Date.now() + TURN_DURATION}
-              onComplete={() => {}}
-              renderer={({ seconds }) => (
-                <Text fontSize="1rem">
-                  <span
-                    style={{
-                      fontWeight: "900",
-                      fontSize: "1.2rem",
-                    }}>
-                    {" "}
-                    User2{" "}
-                  </span>{" "}
-                  you have{" "}
-                  <span
-                    style={{
-                      fontWeight: "600",
-                      fontSize: "1.2rem",
-                      color: "tomato",
-                    }}>
-                    {seconds}
-                  </span>{" "}
-                  seconds to pick a card
-                </Text>
+              {user2Timer && (
+                <Countdown
+                  date={Date.now() + TURN_DURATION}
+                  onComplete={() => {}}
+                  renderer={({ seconds }) => (
+                    <Text fontSize="1rem">
+                      <span
+                        style={{
+                          fontWeight: "900",
+                          fontSize: "1.2rem",
+                        }}>
+                        {" "}
+                        User2{" "}
+                      </span>{" "}
+                      you have{" "}
+                      <span
+                        style={{
+                          fontWeight: "600",
+                          fontSize: "1.2rem",
+                          color: "tomato",
+                        }}>
+                        {seconds}
+                      </span>{" "}
+                      seconds to pick a card
+                    </Text>
+                  )}
+                />
               )}
-            />
-          )}
-        </Flex>
-        <Flex flexDirection="column" gap="1rem">
-          <Flex justifyContent="space-between" width="100%">
-            <TextSumBox sum={player1CardPickedSum} />
-            <TextSumBox sum={player2CardPickedSum} />
-          </Flex>
+            </Flex>
+            <Flex flexDirection="column" gap="1rem">
+              <Flex justifyContent="space-between" width="100%">
+                <TextSumBox sum={player1CardPickedSum} />
+                <TextSumBox sum={player2CardPickedSum} />
+              </Flex>
 
-          <Flex justifyContent="space-between" alignItems="center">
-            <UserBox profile={profile} cards={getUser1Cards()} name="User1" />
-            {/* <Box paddingX=".7rem">
+              <Flex justifyContent="space-between" alignItems="center">
+                <UserBox
+                  profile={profile}
+                  cards={getUser1Cards()}
+                  name="User1"
+                />
+                {/* <Box paddingX=".7rem">
               <Countdown
                 date={startTime + GAME_DURATION}
                 onComplete={handleGameEnd}
@@ -335,19 +330,23 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
               />
             </Box> */}
 
-            <UserBox profile={profile} cards={getUser2Cards()} name="User2" />
+                <UserBox
+                  profile={profile}
+                  cards={getUser2Cards()}
+                  name="User2"
+                />
+              </Flex>
+            </Flex>
           </Flex>
-        </Flex>
-      </Flex>
-      <WinnerModal
-        isOpen={isOpen}
-        onClose={onClose}
-        player1CardPickedSum={player1CardPickedSum}
-        player2CardPickedSum={player2CardPickedSum}
-      />
-      </Box>
-    ) : (
-      <Text>Loading</Text>
+          <WinnerModal
+            isOpen={isOpen}
+            onClose={onClose}
+            player1CardPickedSum={player1CardPickedSum}
+            player2CardPickedSum={player2CardPickedSum}
+          />
+        </Box>
+      ) : (
+        <Text>Loading</Text>
       )}
     </>
   );
@@ -380,23 +379,23 @@ const UserBox: React.FC<{
   profile: string;
   cards: UserCards;
   name: string;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-}> = ({ profile, cards, name }) =>  (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+}> = ({ profile, cards, name }) => (
   <Flex width="40%" gap=".5rem" alignItems="center">
     <Flex flexDirection="column" gap=".2rem" textAlign="center">
       <Image src={profile} height="4rem" alt={`${name}'s Image`} />
       <Text>{name}</Text>
     </Flex>
     <Flex overflowX="scroll" gap=".2rem">
-      {cards && (cards as Card[]).map((card, index) =>   (
-
-        <Image
-          key={index}
-          src={card.image}
-          alt={`Card ${index + 1}`}
-          height="6rem"
-        />
-      ))} 
+      {cards &&
+        (cards as Card[]).map((card, index) => (
+          <Image
+            key={index}
+            src={card.image}
+            alt={`Card ${index + 1}`}
+            height="6rem"
+          />
+        ))}
     </Flex>
   </Flex>
 );
@@ -415,7 +414,7 @@ const WinnerModal: React.FC<{
   } else {
     winner = "It's a tie!";
   }
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -426,12 +425,14 @@ const WinnerModal: React.FC<{
         <ModalBody pb={6}>
           <Flex flexDirection="column" gap=".5rem">
             <Text> THE WINNER IS {winner} </Text>
-            <Text>{winner === "User1" ? player1CardPickedSum : player2CardPickedSum}</Text>
+            <Text>
+              {winner === "User1" ? player1CardPickedSum : player2CardPickedSum}
+            </Text>
           </Flex>
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={() => navigate('/dashboard')}>Close</Button>
+          <Button onClick={() => navigate("/dashboard")}>Close</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
