@@ -78,13 +78,11 @@ const shuffleArray = (array: Card[]) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-let shuffledCardImages: Card[];
+
 type UserCards = Card[] | string | undefined;
 type Sum = number | string | undefined;
 
-// const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const GAME_DURATION = 1200000;
+// const GAME_DURATION = 1200000;
 const TURN_DURATION = 15000; // 5 seconds
 
 const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
@@ -101,8 +99,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   // const [startTime] = useState<number>(Date.now());
   const [gameState, setGameState] = useState<GameState>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
-  const [gameStateAvailable, setGameStateAvailable] = useState(false);
-  const [canClick, setCanClick] = useState(true);
+  const [gameStateAvailable, setGameStateAvailable] = useState<boolean>(false);
+  const [canClick, setCanClick] = useState<boolean>(true);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   // socket = io(URL);
@@ -135,13 +133,17 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
           } else {
             player = 2;
           }
-          const currentPlayer = player === 1 ? "player1" : "player2";
+
           const currentPlayerSelectedCards =
-            gameRoomState[currentPlayer].cardPickedList;
-          const newShuffledList = () =>
-            shuffledCards.filter(
-              (card) => !currentPlayerSelectedCards.includes(card.value)
+            gameRoomState.player1.cardPickedList.concat(
+              gameRoomState.player2?.cardPickedList ?? []
             );
+
+          // Filter out the selected cards from the shuffled deck
+          const newShuffledList = shuffledCards.filter(
+            (card) => !currentPlayerSelectedCards.includes(card.value)
+          );
+
           setShuffledCards(newShuffledList);
           setGameState(gameRoomState);
           setCanClick(true);
@@ -151,6 +153,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       socket.on(
         "gameOver",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
+          setGameState(gameRoomState);
           console.log("Game Over", gameRoomState);
           setCanClick(false);
           onOpen();
@@ -164,10 +167,10 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       };
     }
   }, [socket, navigate, onOpen, shuffledCards]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleGameEnd = () => {
-    console.log("timer end");
-  };
+
+  // const handleGameEnd = () => {
+  //   console.log("timer end");
+  // };
 
   const getTurn = () => {
     return gameState.turn + 1;
@@ -197,6 +200,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
       if (socket && roomId) {
         socket.emit("pick", updatedGameState, roomId, cardValue);
+
         setCanClick(false);
       }
     }
