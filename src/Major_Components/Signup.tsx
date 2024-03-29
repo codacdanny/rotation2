@@ -5,7 +5,6 @@ import {
   Heading,
   Input,
   InputGroup,
-  InputLeftAddon,
   Select,
   Text,
 } from "@chakra-ui/react";
@@ -87,7 +86,6 @@ const Signup: React.FC = () => {
       ...prevData,
       [name]: value,
     }));
-    console.log(value);
   };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -117,7 +115,7 @@ const Signup: React.FC = () => {
       });
       return;
     }
-    if (formData.phoneNumber.length > 11 || formData.phoneNumber.length < 10) {
+    if (formData.phoneNumber.length !== 11) {
       toast({
         title: "Error",
         description: "Invalid phone number",
@@ -128,16 +126,13 @@ const Signup: React.FC = () => {
       });
       return;
     }
-    if (formData.phoneNumber.length === 11) {
-      formData.phoneNumber = formData.phoneNumber.slice(1);
-    }
     try {
       const response = await axios.post(
         "https://rotation2-backend.onrender.com/api/auth/register",
         formData
       );
 
-      localStorage.setItem('token', response.data.data.token);
+      localStorage.setItem("token", response.data.data.token);
       navigate("/dashboard");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -178,9 +173,8 @@ const Signup: React.FC = () => {
             required
           />
           <InputGroup variant="flushed" gap=".5rem">
-            <InputLeftAddon>+234</InputLeftAddon>
             <Input
-              placeholder="8156438250"
+              placeholder="08101010101"
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleInputChange}
