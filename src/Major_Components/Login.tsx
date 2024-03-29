@@ -13,13 +13,13 @@ import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 
 type FormData = {
-  email: string;
+  phoneNumber: string;
   password: string;
 };
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    email: "",
+    phoneNumber: "",
     password: "",
   });
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
         "https://rotation2-backend.onrender.com/api/auth/login",
         formData
       );
-      localStorage.setItem('token', response.data.data.token);
+      localStorage.setItem("token", response.data.data.token);
       navigate("/dashboard");
     } catch (error) {
       console.error((error as AxiosError).response?.data);
@@ -72,9 +72,9 @@ const Login: React.FC = () => {
         <Flex flexDirection="column" gap="2rem">
           <Input
             variant="flushed"
-            placeholder="Email address"
-            name="email"
-            value={formData.email}
+            placeholder="phone number"
+            name="phoneNumber"
+            value={formData.phoneNumber}
             onChange={handleInputChange}
             required
           />
