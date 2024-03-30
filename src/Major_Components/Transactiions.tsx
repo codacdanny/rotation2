@@ -3,6 +3,51 @@ import { AiOutlineArrowRight } from "react-icons/ai";
 import deposit from "../assets/deposit.svg";
 import withdraw from "../assets/withdraw.svg";
 
+const Transactions: React.FC = () => {
+  return (
+    <Box>
+      <Flex marginY="2rem" justifyContent="space-between" alignItems="center">
+        <Text color="#24133F" fontWeight="500" fontSize="1.4rem">
+          Transactions History
+        </Text>
+        <IconButton
+          icon={<AiOutlineArrowRight color="#24133F" size="1.56rem" />}
+          variant="ghost"
+          colorScheme="transparent"
+          aria-label="view balance"
+        />
+      </Flex>
+
+      <TransactionDetail
+        title="Top Up"
+        amount="4,000.00"
+        date="05/02/2023"
+        type="deposit"
+      />
+      <TransactionDetail
+        title="Withdrawal"
+        amount="3,000.00"
+        date="09/04/2023"
+        type="withdrawal"
+      />
+      <TransactionDetail
+        title="Top Up"
+        amount="4,000.00"
+        date="05/02/2023"
+        type="deposit"
+      />
+      <TransactionDetail
+        title="Top Up"
+        amount="4,000.00"
+        date="05/02/2023"
+        type="deposit"
+      />
+    </Box>
+  );
+};
+
+export default Transactions;
+
 interface TransactionDetailsProps {
   title: string;
   amount: string;
@@ -47,48 +92,3 @@ const TransactionDetail: React.FC<TransactionDetailsProps> = ({
     </Flex>
   );
 };
-
-const Transactions: React.FC = () => {
-  return (
-    <Box>
-      <Flex marginY="2rem" justifyContent="space-between" alignItems="center">
-        <Text color="#24133F" fontWeight="500" fontSize="1.4rem">
-          Previous Transactions
-        </Text>
-        <IconButton
-          icon={<AiOutlineArrowRight color="#24133F" size="1.56rem" />}
-          variant="ghost"
-          colorScheme="transparent"
-          aria-label="view balance"
-        />
-      </Flex>
-
-      <TransactionDetail
-        title="Top Up"
-        amount="4,000.00"
-        date="05/02/2023"
-        type="deposit"
-      />
-      <TransactionDetail
-        title="Withdrawal"
-        amount="3,000.00"
-        date="09/04/2023"
-        type="withdrawal"
-      />
-      <TransactionDetail
-        title="Top Up"
-        amount="4,000.00"
-        date="05/02/2023"
-        type="deposit"
-      />
-      <TransactionDetail
-        title="Top Up"
-        amount="4,000.00"
-        date="05/02/2023"
-        type="deposit"
-      />
-    </Box>
-  );
-};
-
-export default Transactions;

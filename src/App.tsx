@@ -8,7 +8,7 @@ import PairingPage from "./Pages/PairingPage";
 import ProfilePage from "./Pages/ProfilePage";
 import GameRoom from "./Pages/GameRoom";
 import { useEffect, useState } from "react";
-// import AdminDashboard from "./Pages/Admin";
+import AdminDashboard from "./Pages/Admin";
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -36,7 +36,7 @@ function App() {
         path="game"
         element={socket ? <GameRoom socket={socket} /> : null}
       />
-      {/* <Route path="admin" element={<AdminDashboard />} /> */}
+      <Route path="admin" element={<AdminDashboard />} />
     </Routes>
   );
 }
