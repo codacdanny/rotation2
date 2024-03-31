@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
-import SignupPage from "./Pages/SignupPage";
+// import SignupPage from "./Pages/SignupPage";
 import LoginPage from "./Pages/LoginPage";
 import DashbordPage from "./Pages/DashbordPage";
 import PickPage from "./Pages/PickPage";
@@ -23,7 +23,7 @@ function App() {
   }, []);
   return (
     <Routes>
-      <Route path="/" element={<SignupPage />} />
+      {/* <Route path="/" element={<SignupPage />} /> */}
       <Route path="login" element={<LoginPage />} />
       <Route
         path="dashboard"
@@ -36,7 +36,7 @@ function App() {
         path="game"
         element={socket ? <GameRoom socket={socket} /> : null}
       />
-      <Route path="admin" element={<AdminDashboard />} />
+      <Route path="/" element={<AdminDashboard />} />
     </Routes>
   );
 }

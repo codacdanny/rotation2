@@ -3,7 +3,7 @@ import { AiOutlineArrowRight } from "react-icons/ai";
 import deposit from "../assets/deposit.svg";
 import withdraw from "../assets/withdraw.svg";
 
-const Transactions: React.FC = () => {
+const UserTransactions: React.FC = () => {
   return (
     <Box>
       <Flex marginY="2rem" justifyContent="space-between" alignItems="center">
@@ -46,7 +46,7 @@ const Transactions: React.FC = () => {
   );
 };
 
-export default Transactions;
+export default UserTransactions;
 
 interface TransactionDetailsProps {
   title: string;

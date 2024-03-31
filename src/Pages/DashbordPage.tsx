@@ -1,12 +1,12 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from "react";
 import { Box, Button, Flex } from "@chakra-ui/react";
 import Nav from "../Minor_Components/Nav";
 import DebitCard from "../Minor_Components/DebitCard";
 import PrimaryButton from "../Minor_Components/PrimaryButton";
-import Transactiions from "../Major_Components/Transactiions";
 import { useNavigate } from "react-router-dom";
-import { Socket } from 'socket.io-client';
-import axios from 'axios';
+import { Socket } from "socket.io-client";
+import axios from "axios";
+import UserTransactions from "../Major_Components/UserTransaction";
 
 // import { useEffect, useState } from "react";
 // import { useSocket } from "../services/Context/SocketContext";
@@ -18,18 +18,19 @@ type DashBoardPageProps = {
 const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState(null);
-  
+
   useEffect(() => {
-    
     // const token = localStorage.getItem('token');
 
     // Include the token in the request headers
-    axios.get('https://rotation2-backend.onrender.com/api/user/my-details').then(response => {
-      setUserDetails(response.data.data);
-      console.log(userDetails)
-    })
-      .catch(error => {
-        console.error('There was an error!', error);
+    axios
+      .get("https://rotation2-backend.onrender.com/api/user/my-details")
+      .then((response) => {
+        setUserDetails(response.data.data);
+        console.log(userDetails);
+      })
+      .catch((error) => {
+        console.error("There was an error!", error);
       });
   }, [userDetails]);
 
@@ -79,7 +80,7 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
           pageName="#"
         />
       </Flex>
-      <Transactiions />
+      <UserTransactions />
     </Box>
   );
 };
