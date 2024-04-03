@@ -43,12 +43,12 @@ const Login: React.FC = () => {
       );
       localStorage.setItem("token", response.data.data.token);
       navigate("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       setLoading(false);
       console.error((error as AxiosError).response?.data);
       toast({
         title: "Error",
-        description: "connection error",
+        description: error.response?.data.msg || "connection error",
         status: "error",
         position: "top-right",
         duration: 9000,

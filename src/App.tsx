@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
-// import SignupPage from "./Pages/SignupPage";
+import SignupPage from "./Pages/SignupPage";
 import LoginPage from "./Pages/LoginPage";
 import DashbordPage from "./Pages/DashbordPage";
 import PickPage from "./Pages/PickPage";
@@ -8,7 +8,8 @@ import PairingPage from "./Pages/PairingPage";
 import ProfilePage from "./Pages/ProfilePage";
 import GameRoom from "./Pages/GameRoom";
 import { useEffect, useState } from "react";
-import AdminDashboard from "./Pages/Admin";
+import Winners from "./Pages/Winners";
+import Players from "./Pages/Players";
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -23,7 +24,7 @@ function App() {
   }, []);
   return (
     <Routes>
-      {/* <Route path="/" element={<SignupPage />} /> */}
+      <Route path="/" element={<SignupPage />} />
       <Route path="login" element={<LoginPage />} />
       <Route
         path="dashboard"
@@ -36,7 +37,8 @@ function App() {
         path="game"
         element={socket ? <GameRoom socket={socket} /> : null}
       />
-      <Route path="/" element={<AdminDashboard />} />
+      <Route path="winners" element={<Winners />} />
+      <Route path="players" element={<Players />} />
     </Routes>
   );
 }

@@ -31,6 +31,7 @@ import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
+import { useUser } from "../Context/UserContext";
 
 type GameRoomProps = {
   socket: Socket;
@@ -39,22 +40,7 @@ type Card = {
   image: string;
   value: number;
 };
-// type GameState = null | {
 
-//   turn: number;
-//   player1: {
-//     id: string;
-//     cardPickedList: number[];
-//     cardPickedSum: number;
-//     noOfPlay: number;
-//   };
-//   player2: {
-//     id: string;
-//     cardPickedList: number[];
-//     cardPickedSum: number;
-//     noOfPlay: number;
-//   };
-// };
 type GameState = {
   turn: number;
   player1: {
@@ -70,7 +56,7 @@ type GameState = {
     cardPickedSum: number;
     noOfPlay: number;
   };
-};
+} | null;
 const cardImages: Card[] = [
   { image: one, value: 10 },
   { image: two, value: 2 },
@@ -93,22 +79,15 @@ const shuffleArray = (array: Card[]) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-let shuffledCardImages: Card[];
+
 type UserCards = Card[] | string | undefined;
 type Sum = number | string | undefined;
 
-// const MAX_CARDS_PER_USER = 5; // Maximum number of cards each user can pick
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const GAME_DURATION = 1200000;
 const TURN_DURATION = 15000; // 5 seconds
 
 const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const navigate = useNavigate();
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [user1Cards, setUser1Cards] = useState<any>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [user2Cards, setUser2Cards] = useState<any>([]);
+  const userDetails = useUser();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [shuffledCards, setShuffledCards] = useState<any>(
     shuffleArray(cardImages)
@@ -117,8 +96,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   // const [currentUser, setCurrentUser] = useState<number>(1);
   const [user1Timer] = useState<boolean>(false);
   const [user2Timer] = useState<boolean>(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [startTime] = useState<number>(Date.now());
+
   const [gameState, setGameState] = useState<GameState>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [gameStateAvailable, setGameStateAvailable] = useState(false);
@@ -150,18 +128,22 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         ({ gameRoomState }: { gameRoomState: GameState }) => {
           let player;
 
-          if (gameRoomState.player1.id === socket.id) {
+          if (gameRoomState?.player1.id === socket.id) {
             player = 1;
           } else {
             player = 2;
           }
-          const currentPlayer = player === 1 ? "player1" : "player2";
+
           const currentPlayerSelectedCards =
-            gameRoomState[currentPlayer].cardPickedList;
-          const newShuffledList = () =>
-            shuffledCards.filter(
-              (card) => !currentPlayerSelectedCards.includes(card.value)
+            gameRoomState?.player1.cardPickedList.concat(
+              gameRoomState.player2?.cardPickedList ?? []
             );
+
+          // Filter out the selected cards from the shuffled deck
+          const newShuffledList = shuffledCards.filter(
+            (card) => !currentPlayerSelectedCards.includes(card.value)
+          );
+
           setShuffledCards(newShuffledList);
           setGameState(gameRoomState);
           setCanClick(true);
@@ -171,6 +153,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       socket.on(
         "gameOver",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
+          setGameState(gameRoomState);
           console.log("Game Over", gameRoomState);
           setCanClick(false);
           onOpen();
@@ -185,9 +168,6 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
     }
   }, [socket, navigate, onOpen, shuffledCards]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleGameEnd = () => {
-    console.log("timer end");
-  };
 
   const getTurn = () => {
     return gameState.turn + 1;
@@ -196,7 +176,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const getPlayer = () => {
     let player;
 
-    if (gameState.player1.id === socket.id) {
+    if (gameState?.player1.id === socket.id) {
       player = 1;
     } else {
       player = 2;
@@ -208,8 +188,6 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       const updatedGameState = { ...gameState };
       updatedGameState.turn = (updatedGameState.turn + 1) % 2;
       const currentPlayer = getPlayer() === 1 ? "player1" : "player2";
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
       updatedGameState[currentPlayer].cardPickedSum += cardValue;
       updatedGameState[currentPlayer].cardPickedList.push(cardValue);
@@ -327,7 +305,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
                 <UserBox
                   profile={profile}
                   cards={getUser1Cards()}
-                  name="User1"
+                  name={userDetails?.phoneNumber}
                 />
                 {/* <Box paddingX=".7rem">
               <Countdown
@@ -353,7 +331,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
                 <UserBox
                   profile={profile}
                   cards={getUser2Cards()}
-                  name="User2"
+                  name={userDetails?.phoneNumber}
                 />
               </Flex>
             </Flex>
