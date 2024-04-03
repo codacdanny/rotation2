@@ -1,4 +1,3 @@
-
 import { Box, Button, Flex } from "@chakra-ui/react";
 import Nav from "../Minor_Components/Nav";
 import DebitCard from "../Minor_Components/DebitCard";
@@ -7,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 
 import UserTransactions from "../Major_Components/UserTransaction";
+import { useUser } from "../Context/UserContext";
 
 // import { useEffect, useState } from "react";
 // import { useSocket } from "../services/Context/SocketContext";
@@ -17,11 +17,11 @@ type DashBoardPageProps = {
 
 const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
   const navigate = useNavigate();
-
+  const { userDetails } = useUser();
   const handleJoinGame = () => {
     if (socket) console.log("huraayyy");
 
-    socket.emit("play", () => {
+    socket.emit("play", userDetails, () => {
       console.log("playedd");
     });
     navigate("/game"); // Pass socket instance as state to game room

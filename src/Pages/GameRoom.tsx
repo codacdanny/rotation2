@@ -45,6 +45,8 @@ type GameState = {
   turn: number;
   player1: {
     id: string;
+    userId: string;
+    phoneNumber: number;
     cardPickedList: number[];
     cardPickedSum: number;
     noOfPlay: number;
@@ -52,6 +54,8 @@ type GameState = {
   player2?: {
     // Make player2 optional since it's initialized later
     id: string;
+    userId: string;
+    phoneNumber: number;
     cardPickedList: number[];
     cardPickedSum: number;
     noOfPlay: number;
@@ -87,7 +91,7 @@ const TURN_DURATION = 15000; // 5 seconds
 
 const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const navigate = useNavigate();
-  const userDetails = useUser();
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [shuffledCards, setShuffledCards] = useState<any>(
     shuffleArray(cardImages)
@@ -101,7 +105,10 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [gameStateAvailable, setGameStateAvailable] = useState(false);
   const [canClick, setCanClick] = useState(true);
-
+  const [user1Id, setUser1Id] = useState<string | null>();
+  const [user2Id, setUser2Id] = useState<string | null>();
+  const [user1Phone, setUser1Phone] = useState<number | null>();
+  const [user2Phone, setUser2Phone] = useState<number | null>();
   const { isOpen, onOpen, onClose } = useDisclosure();
   // socket = io(URL);
 
@@ -119,7 +126,12 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
         setRoomId(roomId);
         setGameState(gameState);
         console.log(gameState);
+
         setGameStateAvailable(true);
+        setUser1Id(gameState?.player1.userId);
+
+        setUser1Phone(gameState?.player1.phoneNumber);
+
         console.log(`this is the room id ${gameState}`);
       });
 
@@ -146,15 +158,17 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
           setShuffledCards(newShuffledList);
           setGameState(gameRoomState);
+
+          // setUser1Phone(gameState?.player1.phoneNumber);
+
           setCanClick(true);
-          console.log(gameRoomState);
         }
       );
       socket.on(
         "gameOver",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
           setGameState(gameRoomState);
-          console.log("Game Over", gameRoomState);
+
           setCanClick(false);
           onOpen();
           // Handle game over logic in here
@@ -192,7 +206,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       updatedGameState[currentPlayer].cardPickedSum += cardValue;
       updatedGameState[currentPlayer].cardPickedList.push(cardValue);
       updatedGameState[currentPlayer].noOfPlay++;
-
+      setUser2Phone(updatedGameState?.player2?.phoneNumber);
       if (socket && roomId) {
         socket.emit("pick", updatedGameState, roomId, cardValue);
         setCanClick(false);
@@ -305,7 +319,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
                 <UserBox
                   profile={profile}
                   cards={getUser1Cards()}
-                  name={userDetails?.phoneNumber}
+                  name={user1Phone ? user1Phone : "loading"}
                 />
                 {/* <Box paddingX=".7rem">
               <Countdown
@@ -331,7 +345,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
                 <UserBox
                   profile={profile}
                   cards={getUser2Cards()}
-                  name={userDetails?.phoneNumber}
+                  name={user2Phone ? user2Phone : "loading"}
                 />
               </Flex>
             </Flex>
@@ -376,7 +390,7 @@ const TextSumBox: React.FC<{ sum: Sum }> = ({ sum }) => (
 const UserBox: React.FC<{
   profile: string;
   cards: UserCards;
-  name: string;
+  name: number | string;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 }> = ({ profile, cards, name }) => (
   <Flex width="40%" gap=".5rem" alignItems="center">

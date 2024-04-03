@@ -20,7 +20,7 @@ const CardInfo: React.FC<CardInfoProps> = ({ label, value }) => (
 
 const DebitCard: React.FC = () => {
   const [view, setView] = useState<boolean>(true);
-  const userDetails = useUser();
+  const { userDetails } = useUser();
   const toggleView = () => {
     setView((prevView) => !prevView);
   };

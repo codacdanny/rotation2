@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useUser } from "../Context/UserContext";
 
 const Nav = () => {
-  const userDetails = useUser();
+  const { userDetails } = useUser();
   return (
     <Box as="nav">
       {!userDetails && <Text>Loading</Text>}
