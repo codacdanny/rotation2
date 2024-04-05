@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FormEventHandler, MouseEventHandler, useState } from "react";
 import {
   Box,
   Button,
@@ -17,18 +17,24 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import Page_Backround from "../Major_Components/Page_Background";
 import profile from "../assets/profileImage.svg";
 import { useRef } from "react";
+import { useUser } from "../Context/UserContext";
+import axios, { AxiosError } from "axios";
 
 const ProfilePage = () => {
+  const { userDetails } = useUser();
+  const { accountDetails } = useUser();
+
   const [userData, setUserData] = useState({
-    email: "fetchemail@gmail.com",
-    username: "Fetch username",
-    accountName: "",
-    accountNumber: "",
-    bankName: "",
+    Email: userDetails.email,
+    Username: userDetails.userId,
+    BankName: accountDetails.bankName,
+    AccountName: accountDetails.accountName,
+    AccountNumber: accountDetails.accountNumber,
   });
 
   const profileActions = [
@@ -44,20 +50,19 @@ const ProfilePage = () => {
   const handleAddBankDetails = (formData: BankDetailsFormData) => {
     const updatedUserData = {
       ...userData,
-      accountName: formData.accountName,
-      accountNumber: formData.accountNumber,
-      bankName: formData.bankName,
+      AccountName: formData.accountName,
+      AccountNumber: formData.accountNumber,
+      BankName: formData.bankName,
     };
 
-    // Persist data (e.g., call API to update user info)
-    // Update state with the new user data
     setUserData(updatedUserData);
 
-    onClose(); // Close modal after successful submission
+    onClose();
   };
 
   const hasBankDetails =
-    userData.accountName && userData.accountNumber.length === 10;
+    accountDetails.accountName !== undefined &&
+    accountDetails.accountNumber !== undefined;
 
   return (
     <Page_Backround>
@@ -76,14 +81,14 @@ const ProfilePage = () => {
             objectFit="cover"
             height="6rem"
           />
-          <Heading fontSize="2rem"> UserID </Heading>
+          <Heading fontSize="2rem"> {userDetails.userId} </Heading>
           <Text>Highest level Attained: level 3</Text>
         </Flex>
         <Flex flexDirection="column" gap="1rem" marginY="2rem">
           {Object.entries(userData).map(([label, value]) => (
             <Flex key={label} flexDirection="column">
               <Text fontSize=".8rem">{label}</Text>
-              <Text>{value}</Text>
+              <Text fontWeight={600}>{value}</Text>
             </Flex>
           ))}
           {!hasBankDetails && (
@@ -147,6 +152,7 @@ const AddBankDetailsModal: React.FC<{
   onClose: () => void;
   onSubmit: (data: BankDetailsFormData) => void;
 }> = ({ isOpen, onClose, onSubmit }) => {
+  const toast = useToast();
   const initialRef = useRef(null);
   const [formData, setFormData] = useState<BankDetailsFormData>({
     accountName: "",
@@ -160,6 +166,32 @@ const AddBankDetailsModal: React.FC<{
       ...prevData,
       [name]: value,
     }));
+  };
+  const handleSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(
+        "https://rotation2-backend.onrender.com/api/user/add-account-details",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (error: any) {
+      console.error((error as AxiosError).response?.data);
+      toast({
+        title: "Error",
+        description: error.response?.data.msg || "connection error",
+        status: "error",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+    onSubmit(formData);
   };
 
   return (
@@ -206,7 +238,7 @@ const AddBankDetailsModal: React.FC<{
           <Button variant="ghost" mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button colorScheme="teal" onClick={() => onSubmit(formData)}>
+          <Button colorScheme="teal" onClick={handleSubmit}>
             Save
           </Button>
         </ModalFooter>

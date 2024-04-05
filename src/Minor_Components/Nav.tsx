@@ -6,6 +6,7 @@ import { useUser } from "../Context/UserContext";
 
 const Nav = () => {
   const { userDetails } = useUser();
+
   return (
     <Box as="nav">
       {!userDetails && <Text>Loading</Text>}
