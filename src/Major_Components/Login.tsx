@@ -43,7 +43,7 @@ const Login: React.FC = () => {
       );
       localStorage.setItem("token", response.data.data.token);
       navigate("/dashboard");
-    } catch (error: unknown) {
+    } catch (error: any) {
       setLoading(false);
       console.error((error as AxiosError).response?.data);
       toast({
