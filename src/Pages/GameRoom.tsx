@@ -31,7 +31,6 @@ import nine from "../assets/170.svg";
 import ten from "../assets/11.svg";
 import profile from "../assets/profileImage.svg";
 import back from "../assets/back.svg";
-import { useUser } from "../Context/UserContext";
 
 type GameRoomProps = {
   socket: Socket;
@@ -105,8 +104,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [gameStateAvailable, setGameStateAvailable] = useState(false);
   const [canClick, setCanClick] = useState(true);
-  const [user1Id, setUser1Id] = useState<string | null>();
-  const [user2Id, setUser2Id] = useState<string | null>();
+  const [, setUser1Id] = useState<string | null>();
+ 
   const [user1Phone, setUser1Phone] = useState<number | null>();
   const [user2Phone, setUser2Phone] = useState<number | null>();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -153,7 +152,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
           // Filter out the selected cards from the shuffled deck
           const newShuffledList = shuffledCards.filter(
-            (card) => !currentPlayerSelectedCards.includes(card.value)
+            (card: { value: number; }) => !currentPlayerSelectedCards?.includes(card.value)
           );
 
           setShuffledCards(newShuffledList);
@@ -182,8 +181,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
     }
   }, [socket, navigate, onOpen, shuffledCards]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
   const getTurn = () => {
+    if (gameState)
     return gameState.turn + 1;
   };
 
@@ -203,9 +202,12 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       updatedGameState.turn = (updatedGameState.turn + 1) % 2;
       const currentPlayer = getPlayer() === 1 ? "player1" : "player2";
 
-      updatedGameState[currentPlayer].cardPickedSum += cardValue;
-      updatedGameState[currentPlayer].cardPickedList.push(cardValue);
-      updatedGameState[currentPlayer].noOfPlay++;
+      if (updatedGameState[currentPlayer]) {
+        updatedGameState[currentPlayer].cardPickedSum += cardValue;
+        updatedGameState[currentPlayer].cardPickedList.push(cardValue);
+        updatedGameState[currentPlayer].noOfPlay++;
+      }
+
       setUser2Phone(updatedGameState?.player2?.phoneNumber);
       if (socket && roomId) {
         socket.emit("pick", updatedGameState, roomId, cardValue);
@@ -243,12 +245,12 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
             justifyContent="space-between"
             width="100%">
             <Flex alignItems="start" justifyContent="space-evenly" wrap="wrap">
-              {shuffledCards.map((card, index) => (
+              {shuffledCards.map((card: { image: unknown; value?: number; }, index: React.Key | null | undefined) => (
                 <ClickableCard
                   handlePickCard={handlePickCard}
                   key={index}
-                  card={card}
-                  picked={pickedCards.includes(card.image)}
+                  card={card as Card}
+                  picked={pickedCards.includes(card.image as string)}
                 />
               ))}
             </Flex>
@@ -419,10 +421,14 @@ const WinnerModal: React.FC<{
   player2CardPickedSum: Sum;
 }> = ({ isOpen, onClose, player1CardPickedSum, player2CardPickedSum }) => {
   let winner;
-  if (player1CardPickedSum > player2CardPickedSum) {
-    winner = "User1";
-  } else if (player1CardPickedSum < player2CardPickedSum) {
-    winner = "User2";
+  if (player1CardPickedSum && player2CardPickedSum) {
+    if (player1CardPickedSum > player2CardPickedSum) {
+      winner = "User1";
+    } else if (player1CardPickedSum < player2CardPickedSum) {
+      winner = "User2";
+    } else {
+      winner = "It's a tie!";
+    }
   } else {
     winner = "It's a tie!";
   }

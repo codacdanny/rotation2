@@ -10,11 +10,11 @@ import { UserProvider } from "./Context/UserContext.tsx";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <UserProvider>
-        <Router>
+      <Router>
+        <UserProvider>
           <App />
-        </Router>
-      </UserProvider>
+        </UserProvider>
+      </Router>
     </ChakraProvider>
   </React.StrictMode>
 );

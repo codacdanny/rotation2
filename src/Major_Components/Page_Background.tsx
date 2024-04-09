@@ -12,7 +12,7 @@ const Page_Backround: React.FC<PageBackgroundProps> = ({ children }) => {
       <Box
         backgroundColor="#E1D7F2"
         maxWidth="100%"
-        height="100svh"
+        minHeight="100svh"
         margin="0 auto"
         paddingY="4rem"
         position="relative"

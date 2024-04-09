@@ -27,7 +27,7 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
     navigate("/game"); // Pass socket instance as state to game room
   };
   return (
-    <Box backgroundColor="#F7F7F7" height="100%" padding=".7rem">
+    <Box backgroundColor="#F7F7F7" minHeight="100svh" padding=".7rem">
       <Nav />
       <DebitCard />
       <Box textAlign="center" marginY="1rem" width="100%">

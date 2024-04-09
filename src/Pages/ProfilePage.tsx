@@ -1,4 +1,4 @@
-import React, { FormEventHandler, MouseEventHandler, useState } from "react";
+import React, { MouseEventHandler, useState } from "react";
 import {
   Box,
   Button,
@@ -24,17 +24,20 @@ import profile from "../assets/profileImage.svg";
 import { useRef } from "react";
 import { useUser } from "../Context/UserContext";
 import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
-  const { userDetails } = useUser();
-  const { accountDetails } = useUser();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { userDetails, accountDetails } = useUser();
 
   const [userData, setUserData] = useState({
-    Email: userDetails.email,
-    Username: userDetails.userId,
-    BankName: accountDetails.bankName,
-    AccountName: accountDetails.accountName,
-    AccountNumber: accountDetails.accountNumber,
+    Email: userDetails?.email || '',
+    Username: userDetails?.userId || '',
+    BankName: accountDetails?.bankName || '',
+    AccountName: accountDetails?.accountName || '',
+    AccountNumber: accountDetails?.accountNumber || '',
+    ReferralLink: `https://rotation2.vercel.app/?referalid=${userDetails?.userId}`,
   });
 
   const profileActions = [
@@ -58,12 +61,26 @@ const ProfilePage = () => {
     setUserData(updatedUserData);
 
     onClose();
+    toast({
+      title: "Account Details Added.",
+      description: "We've added your Bank details",
+      status: "success",
+      duration: 9000,
+      position: "top-right",
+      isClosable: true,
+    });
+    navigate("/dashboard");
   };
 
   const hasBankDetails =
-    accountDetails.accountName !== undefined &&
-    accountDetails.accountNumber !== undefined;
+    accountDetails?.accountName !== "" &&
+    accountDetails?.accountNumber !== "" &&
+    accountDetails?.bankName !== "";
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
   return (
     <Page_Backround>
       <Flex color="#24133F" flexDirection="column">
@@ -81,7 +98,7 @@ const ProfilePage = () => {
             objectFit="cover"
             height="6rem"
           />
-          <Heading fontSize="2rem"> {userDetails.userId} </Heading>
+          <Heading fontSize="2rem"> {userData.Username} </Heading>
           <Text>Highest level Attained: level 3</Text>
         </Flex>
         <Flex flexDirection="column" gap="1rem" marginY="2rem">
@@ -91,25 +108,15 @@ const ProfilePage = () => {
               <Text fontWeight={600}>{value}</Text>
             </Flex>
           ))}
-          {!hasBankDetails && (
-            <Button
-              colorScheme="purple"
-              onClick={onOpen}
-              disabled={!hasBankDetails}>
-              Add Account Details
-            </Button>
-          )}
-          {/* {hasBankDetails && (
-            <Flex flexDirection="column">
-              <Text fontSize=".8rem">Account Name</Text>
-              <Text>{userData.accountName}</Text>
-              <Text fontSize=".8rem">Account Number</Text>
-              <Text>{userData.accountNumber}</Text>
-              <Text fontSize=".8rem">Bank Name</Text>
-              <Text>{userData.bankName}</Text>
-            </Flex>
-          )} */}
         </Flex>
+        {!hasBankDetails && (
+          <Button
+            colorScheme="purple"
+            onClick={onOpen}
+            disabled={!hasBankDetails}>
+            Add Account Details
+          </Button>
+        )}
         <Box gap="1rem">
           {profileActions.map((action) => (
             <Flex key={action.label} flexDirection="column" my="1rem">
@@ -120,6 +127,7 @@ const ProfilePage = () => {
             </Flex>
           ))}
           <Button
+            onClick={handleLogout}
             my="1rem"
             variant="link"
             colorScheme="transparent"
@@ -169,8 +177,38 @@ const AddBankDetailsModal: React.FC<{
   };
   const handleSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
+    if (
+      formData.accountName.trim() === "" ||
+      formData.accountNumber.trim() === "" ||
+      formData.bankName.trim() === ""
+    ) {
+      toast({
+        title: "Error",
+        description: "All fields are required.",
+        status: "error",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+    if (
+      formData.accountNumber.trim().length !== 10 ||
+      isNaN(Number(formData.accountNumber))
+    ) {
+      toast({
+        title: "Error",
+        description: "Account number must be 10 digits.",
+        status: "error",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
     const token = localStorage.getItem("token");
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const response = await axios.post(
         "https://rotation2-backend.onrender.com/api/user/add-account-details",
         formData,
@@ -179,7 +217,9 @@ const AddBankDetailsModal: React.FC<{
             Authorization: `Bearer ${token}`,
           },
         }
+
       );
+     
     } catch (error: any) {
       console.error((error as AxiosError).response?.data);
       toast({
@@ -220,7 +260,6 @@ const AddBankDetailsModal: React.FC<{
               value={formData.accountNumber}
               onChange={handleChange}
               placeholder="Enter Account Number"
-              maxLength={10}
             />
           </FormControl>
           <FormControl mt={4}>
