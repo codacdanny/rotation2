@@ -10,6 +10,7 @@ import GameRoom from "./Pages/GameRoom";
 import { useEffect, useState } from "react";
 import Winners from "./Pages/Winners";
 import Players from "./Pages/Players";
+import ProtectedRoute from "./Major_Components/ProtectedRoute";
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -26,19 +27,68 @@ function App() {
     <Routes>
       <Route path="/" element={<SignupPage />} />
       <Route path="login" element={<LoginPage />} />
+
       <Route
         path="dashboard"
-        element={socket ? <DashbordPage socket={socket} /> : null}
+        element={
+          socket ? (
+            <ProtectedRoute>
+              <DashbordPage socket={socket} />
+            </ProtectedRoute>
+          ) : null
+        }
       />
-      <Route path="pickpage" element={<PickPage />} />
-      <Route path="pair" element={<PairingPage />} />
-      <Route path="profile" element={<ProfilePage />} />
+
+      <Route
+        path="pickpage"
+        element={
+          <ProtectedRoute>
+            <PickPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="pair"
+        element={
+          <ProtectedRoute>
+            <PairingPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="game"
-        element={socket ? <GameRoom socket={socket} /> : null}
+        element={
+          socket ? (
+            <ProtectedRoute>
+              <GameRoom socket={socket} />
+            </ProtectedRoute>
+          ) : null
+        }
       />
-      <Route path="winners" element={<Winners />} />
-      <Route path="players" element={<Players />} />
+      <Route
+        path="winners"
+        element={
+          <ProtectedRoute>
+            <Winners />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="players"
+        element={
+          <ProtectedRoute>
+            <Players />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
