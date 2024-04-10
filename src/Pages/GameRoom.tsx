@@ -105,7 +105,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const [gameStateAvailable, setGameStateAvailable] = useState(false);
   const [canClick, setCanClick] = useState(true);
   const [, setUser1Id] = useState<string | null>();
- 
+
   const [user1Phone, setUser1Phone] = useState<number | null>();
   const [user2Phone, setUser2Phone] = useState<number | null>();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -152,7 +152,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
           // Filter out the selected cards from the shuffled deck
           const newShuffledList = shuffledCards.filter(
-            (card: { value: number; }) => !currentPlayerSelectedCards?.includes(card.value)
+            (card: { value: number }) =>
+              !currentPlayerSelectedCards?.includes(card.value)
           );
 
           setShuffledCards(newShuffledList);
@@ -182,8 +183,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   }, [socket, navigate, onOpen, shuffledCards]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getTurn = () => {
-    if (gameState)
-    return gameState.turn + 1;
+    if (gameState) return gameState.turn + 1;
   };
 
   const getPlayer = () => {
@@ -245,14 +245,19 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
             justifyContent="space-between"
             width="100%">
             <Flex alignItems="start" justifyContent="space-evenly" wrap="wrap">
-              {shuffledCards.map((card: { image: unknown; value?: number; }, index: React.Key | null | undefined) => (
-                <ClickableCard
-                  handlePickCard={handlePickCard}
-                  key={index}
-                  card={card as Card}
-                  picked={pickedCards.includes(card.image as string)}
-                />
-              ))}
+              {shuffledCards.map(
+                (
+                  card: { image: unknown; value?: number },
+                  index: React.Key | null | undefined
+                ) => (
+                  <ClickableCard
+                    handlePickCard={handlePickCard}
+                    key={index}
+                    card={card as Card}
+                    picked={pickedCards.includes(card.image as string)}
+                  />
+                )
+              )}
             </Flex>
             <Flex margin="0 auto" alignItems="center">
               {user1Timer && (
@@ -450,7 +455,7 @@ const WinnerModal: React.FC<{
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={() => navigate("/dashboard")}>Close</Button>
+          <Button onClick={() => navigate("/congrats")}>Close</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import Winners from "./Pages/Winners";
 import Players from "./Pages/Players";
 import ProtectedRoute from "./Major_Components/ProtectedRoute";
+import Congratulations from "./Pages/Congratulations";
+import Loser from "./Pages/Loser";
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -86,6 +88,22 @@ function App() {
         element={
           <ProtectedRoute>
             <Players />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="congrats"
+        element={
+          <ProtectedRoute>
+            <Congratulations />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="loser"
+        element={
+          <ProtectedRoute>
+            <Loser />
           </ProtectedRoute>
         }
       />
