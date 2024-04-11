@@ -9,7 +9,7 @@ import React, {
 import axios from "axios";
 
 import { jwtDecode } from "jwt-decode";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 interface UserDetails {
   data: SetStateAction<UserDetails>;
   _id: string;
@@ -50,7 +50,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     useState<UserAccountDetails | null>(null);
   const [decoded, setDecoded] = useState<any>();
   const location = useLocation();
-  const navigate = useNavigate();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {

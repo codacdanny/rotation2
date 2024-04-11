@@ -1,8 +1,10 @@
 import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import Page_Backround from "../Major_Components/Page_Background";
 import profile from "../assets/profileImage.svg";
+import { useNavigate } from "react-router-dom";
 
 const Congratulations = () => {
+  const navigate = useNavigate();
   return (
     <Page_Backround>
       <Box
@@ -14,7 +16,7 @@ const Congratulations = () => {
         gap="3rem">
         <Box>
           <Heading my="2rem" color="#24133F">
-            CONGRATULAIONS!!
+            CONGRATULATIONS!!
           </Heading>
           <Text color="#24133F" textAlign="center">
             Well played Champ. Let's do more.
@@ -39,7 +41,10 @@ const Congratulations = () => {
           254pts LV 2 Unlocked
         </Box>
         <Flex justifyContent="space-between">
-          <Button colorScheme="transparent" color="#24133F">
+          <Button
+            colorScheme="transparent"
+            color="#24133F"
+            onClick={() => navigate("/dashboard")}>
             Go to DashbordPage
           </Button>
           <Button colorScheme="purple">Start Next Level</Button>

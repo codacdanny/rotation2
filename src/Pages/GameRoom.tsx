@@ -108,6 +108,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
   const [user1Phone, setUser1Phone] = useState<number | null>();
   const [user2Phone, setUser2Phone] = useState<number | null>();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   // socket = io(URL);
 
@@ -190,8 +191,10 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
     let player;
 
     if (gameState?.player1.id === socket.id) {
+      localStorage.setItem("myId", socket.id);
       player = 1;
     } else {
+      localStorage.setItem("myId", socket.id);
       player = 2;
     }
     return player;
@@ -362,6 +365,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
             onClose={onClose}
             player1CardPickedSum={player1CardPickedSum}
             player2CardPickedSum={player2CardPickedSum}
+            gameState={gameState}
           />
         </Box>
       ) : (
@@ -419,25 +423,124 @@ const UserBox: React.FC<{
   </Flex>
 );
 
+// const WinnerModal: React.FC<{
+//   isOpen: boolean;
+//   onClose: () => void;
+//   player1CardPickedSum: Sum;
+//   player2CardPickedSum: Sum;
+// }> = ({ isOpen, onClose, player1CardPickedSum, player2CardPickedSum }) => {
+//   let winner;
+//   if (player1CardPickedSum && player2CardPickedSum) {
+//     if (player1CardPickedSum > player2CardPickedSum) {
+//       winner = "User1";
+//     } else if (player1CardPickedSum < player2CardPickedSum) {
+//       winner = "User2";
+//     } else {
+//       winner = "It's a tie!";
+//     }
+//   } else {
+//     winner = "It's a tie!";
+//   }
+//   const navigate = useNavigate();
+//   const handleNavigate = () => {
+//     if (winner === "User1") {
+//       navigate("/congrats");
+//     } else if (winner === "User2") {
+//       navigate("/loser");
+//     } else {
+//       navigate("/dashboard"); // Close the modal in case of a tie
+//     }
+//   };
+//   return (
+//     <Modal isOpen={isOpen} onClose={onClose}>
+//       <ModalOverlay />
+//       <ModalContent>
+//         <ModalHeader>THE END!!!</ModalHeader>
+//         <ModalCloseButton />
+//         <ModalBody pb={6}>
+//           <Flex flexDirection="column" gap=".5rem">
+//             <Text> THE WINNER IS {winner} </Text>
+//             <Text>
+//               {winner === "User1" ? player1CardPickedSum : player2CardPickedSum}
+//             </Text>
+//           </Flex>
+//         </ModalBody>
+
+//         <ModalFooter>
+//           <Button onClick={handleNavigate}>Close</Button>
+//         </ModalFooter>
+//       </ModalContent>
+//     </Modal>
+//   );
+// };
 const WinnerModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
   player1CardPickedSum: Sum;
   player2CardPickedSum: Sum;
-}> = ({ isOpen, onClose, player1CardPickedSum, player2CardPickedSum }) => {
-  let winner;
+  gameState: GameState; // Pass the gameState to access userIds
+}> = ({
+  isOpen,
+  onClose,
+  player1CardPickedSum,
+  player2CardPickedSum,
+  gameState,
+}) => {
+  let winner: string | undefined = undefined;
+  let loser: string | undefined = undefined;
+  // Ensure game state is available
+  if (!gameState) return null;
+
+  // Determine the winner based on userIds
+  const player1Id = gameState.player1.userId;
+  const player2Id = gameState.player2?.userId;
+
+  const playerOne = gameState.player1?.id;
+  const playerTwo = gameState.player2?.id;
+  //  const player1 = gameState.player1.id
+  //  const player2 = gameState.player2.id
+
   if (player1CardPickedSum && player2CardPickedSum) {
     if (player1CardPickedSum > player2CardPickedSum) {
-      winner = "User1";
+      winner = player1Id;
+      loser = player2Id;
     } else if (player1CardPickedSum < player2CardPickedSum) {
-      winner = "User2";
-    } else {
-      winner = "It's a tie!";
+      winner = player2Id;
+      loser = player1Id;
     }
-  } else {
-    winner = "It's a tie!";
   }
+
   const navigate = useNavigate();
+
+  // Navigate based on the winner's userId
+  const handleNavigate = () => {
+    let myId: string = localStorage.getItem("myId")!;
+
+    //     if ((myId== player1Id && gameState.player1.cardPickedSum > gameState.?player2.cardPickedSum) || (
+    //  myId === player2Id && gameState.player2?.cardPickedSum > gameState.player1.cardPickedSum
+    //     )) {
+    //       navigate('/congrats')
+    //      } else navigate('/loser')
+    console.log(
+      gameState.player1.cardPickedSum > gameState.player2?.cardPickedSum
+    );
+    console.log(
+      gameState.player2.cardPickedSum > gameState.player1.cardPickedSum
+    );
+    console.log(myId);
+    console.log(player1Id);
+    console.log(player2Id);
+    if (
+      (myId === playerOne &&
+        gameState.player1.cardPickedSum > gameState.player2?.cardPickedSum) ||
+      (myId === playerTwo &&
+        gameState.player2?.cardPickedSum > gameState.player1.cardPickedSum)
+    ) {
+      navigate("/congrats");
+    } else {
+      navigate("/loser");
+    }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -447,19 +550,22 @@ const WinnerModal: React.FC<{
         <ModalCloseButton />
         <ModalBody pb={6}>
           <Flex flexDirection="column" gap=".5rem">
-            <Text> THE WINNER IS {winner} </Text>
+            <Text> THE WINNER IS {winner ? winner : "It's a tie!"} </Text>
             <Text>
-              {winner === "User1" ? player1CardPickedSum : player2CardPickedSum}
+              {winner
+                ? winner === player1Id
+                  ? player1CardPickedSum
+                  : player2CardPickedSum
+                : ""}
             </Text>
           </Flex>
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={() => navigate("/congrats")}>Close</Button>
+          <Button onClick={handleNavigate}>Close</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
   );
 };
-
 export default GameRoom;

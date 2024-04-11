@@ -1,7 +1,9 @@
 import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import Page_Backround from "../Major_Components/Page_Background";
 import profile from "../assets/profileImage.svg";
+import { useNavigate } from "react-router-dom";
 const Loser = () => {
+  const navigate = useNavigate();
   return (
     <Page_Backround>
       <Box
@@ -38,7 +40,10 @@ const Loser = () => {
           you had 254pts
         </Box>
         <Flex justifyContent="space-between">
-          <Button colorScheme="transparent" color="#24133F">
+          <Button
+            colorScheme="transparent"
+            color="#24133F"
+            onClick={() => navigate("/dashboard")}>
             Go to DashbordPage
           </Button>
         </Flex>
