@@ -1,4 +1,4 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, useToast } from "@chakra-ui/react";
 import Nav from "../Minor_Components/Nav";
 import DebitCard from "../Minor_Components/DebitCard";
 import PrimaryButton from "../Minor_Components/PrimaryButton";
@@ -7,6 +7,8 @@ import { Socket } from "socket.io-client";
 
 import UserTransactions from "../Major_Components/UserTransaction";
 import { useUser } from "../Context/UserContext";
+import axios from "axios";
+import { useState } from "react";
 
 // import { useEffect, useState } from "react";
 // import { useSocket } from "../services/Context/SocketContext";
@@ -16,15 +18,73 @@ type DashBoardPageProps = {
 };
 
 const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
-  const navigate = useNavigate();
-  const { userDetails } = useUser();
-  const handleJoinGame = () => {
-    if (socket) console.log("huraayyy");
+  const [loading, setLoading] = useState<boolean>(false);
 
-    socket.emit("play", userDetails, () => {
-      console.log("playedd");
-    });
-    navigate("/game"); // Pass socket instance as state to game room
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { userDetails } = useUser();
+  const handleJoinWaitList = async () => {
+    const token = localStorage.getItem("token");
+    const balance = userDetails.rcBalance;
+    if (token && balance >= 200) {
+      let timeRemainingInMins: number;
+      try {
+        setLoading(true);
+        const joinWaitRoomResponse = await axios.get<any>(
+          "https://rotation2-backend.onrender.com/api/user/join-wait-list",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log(joinWaitRoomResponse.data.data.timeRemaining);
+
+        toast({
+          title: "Success",
+          description: "You have been added to the waitlist",
+          status: "success",
+          position: "top-right",
+          duration: 9000,
+          isClosable: true,
+        });
+        timeRemainingInMins =
+          joinWaitRoomResponse.data.data.timeRemaining.minutes;
+        navigate(`/pair/?time=${timeRemainingInMins}`);
+      } catch (error) {
+        setLoading(false);
+        if (error.response?.data.msg === "Insufficient RC balance.") {
+          toast({
+            title: "Error",
+            description: "Insufficient RC balance",
+            status: "error",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+        if (error.response?.data.msg === "Added to waitlist already.") {
+          toast({
+            title: "Warning",
+            description: "You are already in the waitlist",
+            status: "warning",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+          });
+          navigate(`/pair/?time=${timeRemainingInMins}`);
+        }
+      }
+    } else {
+      toast({
+        title: "Error",
+        description: "Insufficient RC balance",
+        status: "error",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
   return (
     <Box backgroundColor="#F7F7F7" minHeight="100svh" padding=".7rem">
@@ -32,13 +92,14 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
       <DebitCard />
       <Box textAlign="center" marginY="1rem" width="100%">
         <Button
+          isLoading={loading}
           color="#fff"
           bgColor="#24133F"
           width="100%"
           className="pulse circle orange"
           colorScheme="violet"
-          onClick={handleJoinGame}>
-          PLAY GAME
+          onClick={handleJoinWaitList}>
+          Join Waiting Room{" "}
         </Button>
       </Box>
 

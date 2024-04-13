@@ -14,8 +14,10 @@ import {
   ModalFooter,
   Button,
   Box,
+  useToast,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, redirect } from "react-router-dom";
+
 import { Socket } from "socket.io-client";
 
 import Countdown from "react-countdown";
@@ -41,6 +43,7 @@ type Card = {
 };
 
 type GameState = {
+  level: number;
   turn: number;
   player1: {
     id: string;
@@ -90,7 +93,7 @@ const TURN_DURATION = 15000; // 5 seconds
 
 const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   const navigate = useNavigate();
-
+  const toast = useToast();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [shuffledCards, setShuffledCards] = useState<any>(
     shuffleArray(cardImages)
@@ -108,7 +111,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
   const [user1Phone, setUser1Phone] = useState<number | null>();
   const [user2Phone, setUser2Phone] = useState<number | null>();
-
+  const [timeToPlay, setTimeToPlay] = useState<string>("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   // socket = io(URL);
 
@@ -134,12 +137,26 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
         console.log(`this is the room id ${gameState}`);
       });
+      socket.on("fullGameRoom", (timeToPlay: string) => {
+        setTimeToPlay(timeToPlay);
+
+        if (timeToPlay) {
+          toast({
+            title: "User2 Joined",
+            description: "You can now Pick a card",
+            status: "success",
+            position: "bottom",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      });
 
       socket.on(
         "gameRoomUpdate",
         ({ gameRoomState }: { gameRoomState: GameState }) => {
           let player;
-
+          console.log(gameRoomState);
           if (gameRoomState?.player1.id === socket.id) {
             player = 1;
           } else {
@@ -158,6 +175,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
           );
 
           setShuffledCards(newShuffledList);
+          console.log(gameRoomState);
+
           setGameState(gameRoomState);
 
           // setUser1Phone(gameState?.player1.phoneNumber);
@@ -236,6 +255,19 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
   };
   const player1CardPickedSum = gameState?.player1?.cardPickedSum ?? 0;
   const player2CardPickedSum = gameState?.player2?.cardPickedSum ?? 0;
+  // socket.on("fullGameRoom", (timeToPlay: string) => {
+  //   setTimeToPlay(timeToPlay);
+  // });
+  // if (timeToPlay) {
+  //   toast({
+  //     title: "User2 Joined",
+  //     description: "You can now Pick a card",
+  //     status: "success",
+  //     position: "bottom",
+  //     duration: 9000,
+  //     isClosable: true,
+  //   });
+  // }
   return (
     <>
       {gameStateAvailable ? (
@@ -516,29 +548,40 @@ const WinnerModal: React.FC<{
   const handleNavigate = () => {
     let myId: string = localStorage.getItem("myId")!;
 
-    //     if ((myId== player1Id && gameState.player1.cardPickedSum > gameState.?player2.cardPickedSum) || (
-    //  myId === player2Id && gameState.player2?.cardPickedSum > gameState.player1.cardPickedSum
-    //     )) {
-    //       navigate('/congrats')
-    //      } else navigate('/loser')
-    console.log(
-      gameState.player1.cardPickedSum > gameState.player2?.cardPickedSum
-    );
-    console.log(
-      gameState.player2.cardPickedSum > gameState.player1.cardPickedSum
-    );
-    console.log(myId);
-    console.log(player1Id);
-    console.log(player2Id);
+    let winnerId: string;
+    let loserId: string;
+    let level: number;
+    let points: number;
     if (
       (myId === playerOne &&
         gameState.player1.cardPickedSum > gameState.player2?.cardPickedSum) ||
       (myId === playerTwo &&
         gameState.player2?.cardPickedSum > gameState.player1.cardPickedSum)
     ) {
-      navigate("/congrats");
+      myId === playerOne
+        ? (winnerId = gameState.player1.userId)
+        : (winnerId = gameState.player2?.userId);
+
+      myId === playerOne
+        ? (points = gameState.player1.cardPickedSum)
+        : (points = gameState.player2?.cardPickedSum);
+      level = gameState.level;
+      console.log(
+        `this is the winner ${winnerId} and this is the level ${level} with this point ${points}`
+      );
+      navigate(`/congrats?winner=${winnerId}&level=${level}&points=${points}`);
     } else {
-      navigate("/loser");
+      myId === playerTwo
+        ? (loserId = gameState.player1.userId)
+        : (loserId = gameState.player2?.userId);
+      myId === playerTwo
+        ? (points = gameState.player1.cardPickedSum)
+        : (points = gameState.player2?.cardPickedSum);
+      level = gameState.level;
+      console.log(
+        `this is the LOSER ${loserId} and this is the level ${level} with this point ${points}`
+      );
+      navigate(`/loser?loser=${loserId}&level=${level}&points=${points}`);
     }
   };
 

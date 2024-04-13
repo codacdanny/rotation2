@@ -1,10 +1,33 @@
 import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import Page_Backround from "../Major_Components/Page_Background";
 import profile from "../assets/profileImage.svg";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-const Congratulations = () => {
+const Congratulations = ({ socket }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const winner = queryParams.get("winner");
+  const level = queryParams.get("level");
+  const points = queryParams.get("points");
+  console.log(level, winner);
+
+  // useEffect(() => {
+  //   socket.on("connect", () => {
+  //     console.log("Connected to server");
+  //   });
+  //   // return () => {
+  //   //   second
+  //   // }
+  // }, [socket]);
+
+  const handleNextLevel = () => {
+    if (socket) {
+      socket.emit("winner", winner, level);
+      navigate("/game");
+    }
+  };
   return (
     <Page_Backround>
       <Box
@@ -38,7 +61,7 @@ const Congratulations = () => {
           color="#fff"
           bgGradient="linear-gradient(to right, #6B39BD, #24133F, #5D32A5)"
           padding="1rem">
-          254pts LV 2 Unlocked
+          {points} points Next Level Unlocked
         </Box>
         <Flex justifyContent="space-between">
           <Button
@@ -47,7 +70,9 @@ const Congratulations = () => {
             onClick={() => navigate("/dashboard")}>
             Go to DashbordPage
           </Button>
-          <Button colorScheme="purple">Start Next Level</Button>
+          <Button colorScheme="purple" onClick={handleNextLevel}>
+            Start Next Level
+          </Button>
         </Flex>
       </Box>
     </Page_Backround>

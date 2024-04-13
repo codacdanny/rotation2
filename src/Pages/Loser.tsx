@@ -1,9 +1,21 @@
 import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import Page_Backround from "../Major_Components/Page_Background";
 import profile from "../assets/profileImage.svg";
-import { useNavigate } from "react-router-dom";
-const Loser = () => {
+import { useLocation, useNavigate } from "react-router-dom";
+const Loser = ({ socket }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const loser = queryParams.get("loser");
+  // const level = queryParams.get("level");
+  const points = queryParams.get("points");
+  console.log(loser);
+  const handleHome = () => {
+    // if (socket) {
+    //   socket.emit("loser", loser);
+    // }
+    navigate("/dashboard");
+  };
   return (
     <Page_Backround>
       <Box
@@ -37,13 +49,13 @@ const Loser = () => {
           color="#fff"
           bgGradient="linear-gradient(to right, #6B39BD, #24133F, #5D32A5)"
           padding="1rem">
-          you had 254pts
+          you had {points}point
         </Box>
         <Flex justifyContent="space-between">
           <Button
             colorScheme="transparent"
             color="#24133F"
-            onClick={() => navigate("/dashboard")}>
+            onClick={handleHome}>
             Go to DashbordPage
           </Button>
         </Flex>

@@ -18,7 +18,8 @@ function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const socketInstance = io("https://rotation2-backend.onrender.com/");
+    // const socketInstance = io("https://rotation2-backend.onrender.com/");
+    const socketInstance = io("http://localhost:3000");
     setSocket(socketInstance);
 
     return () => {
@@ -53,7 +54,7 @@ function App() {
         path="pair"
         element={
           <ProtectedRoute>
-            <PairingPage />
+            <PairingPage socket={socket} />
           </ProtectedRoute>
         }
       />
@@ -95,7 +96,7 @@ function App() {
         path="congrats"
         element={
           <ProtectedRoute>
-            <Congratulations />
+            <Congratulations socket={socket} />
           </ProtectedRoute>
         }
       />
@@ -103,7 +104,7 @@ function App() {
         path="loser"
         element={
           <ProtectedRoute>
-            <Loser />
+            <Loser socket={socket} />
           </ProtectedRoute>
         }
       />
