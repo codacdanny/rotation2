@@ -5,6 +5,7 @@ import {
   Heading,
   Input,
   InputGroup,
+  InputRightElement,
   Select,
   Text,
 } from "@chakra-ui/react";
@@ -14,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
 // import AuthButton from "../Minor_Components/AuthButton";
 import { ChangeEvent, FormEventHandler, useState } from "react";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 type FormData = {
   email: string;
@@ -68,6 +70,8 @@ const statesInNigeria: string[] = [
 const Signup: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const [show, setShow] = useState(false);
+  const handleClick = () => setShow(!show);
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -206,24 +210,43 @@ const Signup: React.FC = () => {
               </option>
             ))}
           </Select>
-          <Input
-            type="password"
-            variant="flushed"
-            placeholder="Password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
-          <Input
-            type="password"
-            variant="flushed"
-            placeholder="Confirm Password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            required
-          />
+          <InputGroup>
+            <Input
+              type={show ? "text" : "password"}
+              variant="flushed"
+              placeholder="Password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+            <InputRightElement onClick={handleClick}>
+              {show ? (
+                <AiFillEye opacity={0.4} />
+              ) : (
+                <AiFillEyeInvisible opacity={0.4} />
+              )}
+            </InputRightElement>
+          </InputGroup>
+
+          <InputGroup>
+            <Input
+              type={show ? "text" : "password"}
+              variant="flushed"
+              placeholder="Confirm Password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              required
+            />
+            <InputRightElement onClick={handleClick}>
+              {show ? (
+                <AiFillEye opacity={0.4} />
+              ) : (
+                <AiFillEyeInvisible opacity={0.4} />
+              )}
+            </InputRightElement>
+          </InputGroup>
           <Input
             variant="flushed"
             placeholder="Referral ID"

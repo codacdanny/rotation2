@@ -5,10 +5,12 @@ import {
   Flex,
   Heading,
   Input,
+  InputGroup,
+  InputRightElement,
   Text,
   useToast,
 } from "@chakra-ui/react";
-// import AuthButton from "../Minor_Components/AuthButton";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 
@@ -23,6 +25,8 @@ const Login: React.FC = () => {
     phoneNumber: "",
     password: "",
   });
+  const [show, setShow] = React.useState(false);
+  const handleClick = () => setShow(!show);
   const navigate = useNavigate();
   const toast = useToast();
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +78,7 @@ const Login: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <Flex flexDirection="column" gap="2rem">
           <Input
+            type="number"
             variant="flushed"
             placeholder="phone number"
             name="phoneNumber"
@@ -81,15 +86,25 @@ const Login: React.FC = () => {
             onChange={handleInputChange}
             required
           />
-          <Input
-            variant="flushed"
-            placeholder="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
+          <InputGroup>
+            <Input
+              variant="flushed"
+              placeholder="Password"
+              name="password"
+              type={show ? "text" : "password"}
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+
+            <InputRightElement onClick={handleClick}>
+              {show ? (
+                <AiFillEye opacity={0.4} />
+              ) : (
+                <AiFillEyeInvisible opacity={0.4} />
+              )}
+            </InputRightElement>
+          </InputGroup>
           <Box
             fontSize=".7rem"
             fontWeight={200}
