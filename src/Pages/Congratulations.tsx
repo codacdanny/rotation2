@@ -2,8 +2,8 @@ import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import Page_Backround from "../Major_Components/Page_Background";
 import profile from "../assets/profileImage.svg";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { useUser } from "../Context/UserContext";
+// import { useEffect } from "react";
+// import { useUser } from "../Context/UserContext";
 
 const Congratulations = ({ socket }) => {
   const navigate = useNavigate();
@@ -13,11 +13,11 @@ const Congratulations = ({ socket }) => {
   const level = queryParams.get("level");
   const points = queryParams.get("points");
   console.log(level, winner);
-  const { userDetails } = useUser();
+  // const {userDetails} = useUser()
 
   const handleNextLevel = () => {
     if (socket) {
-      socket.emit("play", userDetails);
+      socket.emit("winner", winner, level);
       navigate("/game");
     }
   };
