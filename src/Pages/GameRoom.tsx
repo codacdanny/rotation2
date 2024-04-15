@@ -518,19 +518,17 @@ const WinnerModal: React.FC<{
   player2CardPickedSum,
   gameState,
 }) => {
-  let winner: string | undefined = undefined;
-  let loser: string | undefined = undefined;
+  let winner: number | undefined = undefined;
+  let loser: number | undefined = undefined;
   // Ensure game state is available
   if (!gameState) return null;
 
   // Determine the winner based on userIds
-  const player1Id = gameState.player1.userId;
-  const player2Id = gameState.player2?.userId;
+  const player1Id = gameState.player1.phoneNumber;
+  const player2Id = gameState.player2?.phoneNumber;
 
   const playerOne = gameState.player1?.id;
   const playerTwo = gameState.player2?.id;
-  //  const player1 = gameState.player1.id
-  //  const player2 = gameState.player2.id
 
   if (player1CardPickedSum && player2CardPickedSum) {
     if (player1CardPickedSum > player2CardPickedSum) {
@@ -572,11 +570,11 @@ const WinnerModal: React.FC<{
       navigate(`/congrats?winner=${winnerId}&level=${level}&points=${points}`);
     } else {
       myId === playerTwo
-        ? (loserId = gameState.player1.userId)
-        : (loserId = gameState.player2?.userId);
+        ? (loserId = gameState.player2?.userId)
+        : (loserId = gameState.player1.userId);
       myId === playerTwo
-        ? (points = gameState.player1.cardPickedSum)
-        : (points = gameState.player2?.cardPickedSum);
+        ? (points = gameState.player2?.cardPickedSum)
+        : (points = gameState.player1.cardPickedSum);
       level = gameState.level;
       console.log(
         `this is the LOSER ${loserId} and this is the level ${level} with this point ${points}`

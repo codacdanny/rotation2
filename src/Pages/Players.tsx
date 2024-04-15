@@ -17,9 +17,12 @@ const Players = () => {
           You have a total of{" "}
         </Text>
         <Text fontSize="2rem" fontWeight={800}>
-          20 Players
+          0 Players
         </Text>
-
+        <Text textAlign="justify">
+          Please click on your userId, copy your profile Link and share to
+          people to have them in your downline
+        </Text>
         <PrimaryButton
           textColor="#F7F7F7"
           backgroundColor="purple"

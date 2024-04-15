@@ -49,7 +49,7 @@ const Loser = ({ socket }) => {
           color="#fff"
           bgGradient="linear-gradient(to right, #6B39BD, #24133F, #5D32A5)"
           padding="1rem">
-          you had {points}point
+          you had {points} point
         </Box>
         <Flex justifyContent="space-between">
           <Button

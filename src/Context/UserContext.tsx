@@ -18,6 +18,7 @@ interface UserDetails {
   phoneNumber: string;
   age: number;
   rcBalance: number;
+  userType: string;
   // Add other properties as needed
 }
 type UserAccountDetails = {
@@ -69,6 +70,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                   },
                 }
               );
+              console.log((await userDetailsResponse).data.data);
 
               // Make the second API call to fetch account details
               const accountDetailsResponse = axios.get<UserAccountDetails>(

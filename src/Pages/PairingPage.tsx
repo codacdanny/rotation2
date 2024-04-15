@@ -109,8 +109,10 @@ const PairingPage = ({ socket }) => {
         <User />
       </Flex>
       <VStack gap="2rem" marginY="2rem">
-        <Text>Please Wait...</Text>
-        {time ? (
+        <Text>
+          Please Wait patiently and be here atleast 3 minutes before the game...
+        </Text>
+        {time >= 0 ? (
           <Box textAlign="center" marginY="1rem" width="fit-content">
             <Button
               color="#fff"
@@ -123,20 +125,10 @@ const PairingPage = ({ socket }) => {
             </Button>
           </Box>
         ) : (
-          <Box textAlign="center" marginY="1rem" width="fit-content">
-            <Button
-              color="#fff"
-              bgColor="#24133F"
-              width="100%"
-              className="pulse circle orange"
-              colorScheme="violet"
-              onClick={handlePlay}>
-              Play Game
-            </Button>
-          </Box>
+          <></>
         )}
 
-        {time > 1000 ? (
+        {time > 720 ? (
           <Text textAlign="center" fontWeight="500">
             You Missed The Game , Join Next Time
           </Text>
@@ -154,7 +146,9 @@ const PairingPage = ({ socket }) => {
 
         <Text textAlign="center" fontWeight="600" fontSize=".8rem">
           The Play button appears 20 seconds before the game. so you can click
-          and join a room
+          and join a room <br />
+          Also put your device in Landscape mode to get a good feel of the game
+          room
         </Text>
         <Text textAlign="center" fontWeight="300" fontSize=".8rem">
           Do kindly note that any player who fails to start the game at the end
