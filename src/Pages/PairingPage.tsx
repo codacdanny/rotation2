@@ -23,7 +23,7 @@ import { useUser } from "../Context/UserContext";
 const WelcomeSection: React.FC = () => (
   <Flex flexDirection="column" alignItems="center">
     <Heading textAlign="center">
-      Please be patient while you we pick an opponent for you
+      Please be patient while we pick an opponent for you
     </Heading>
   </Flex>
 );
@@ -111,7 +111,7 @@ const PairingPage = ({ socket }) => {
         <Text>
           Please Wait patiently and be here atleast 3 minutes before the game...
         </Text>
-        {time >= 0 ? (
+        {time >= 0 && time <= 2 ? (
           <Box textAlign="center" marginY="1rem" width="fit-content">
             <Button
               color="#fff"
@@ -127,18 +127,18 @@ const PairingPage = ({ socket }) => {
           <></>
         )}
 
-        {time > 7200 ? (
+        {time > 720 ? (
           <Text textAlign="center" fontWeight="500">
             You Missed The Game , Join Next Time
           </Text>
         ) : (
           <Text textAlign="center" fontWeight="500">
-            Your game with User22a7 begins by{" "}
+            Your game with User22a7 begins in{" "}
             <span
               style={{
                 color: "#06BCC1",
               }}>
-              12:35 pm
+              {time} minutes
             </span>{" "}
           </Text>
         )}
