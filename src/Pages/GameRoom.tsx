@@ -137,8 +137,8 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
         console.log(`this is the room id ${gameState}`);
       });
-      socket.on("fullGameRoom", (timeToPlay: string) => {
-        setTimeToPlay(timeToPlay);
+      socket.on("fullGameRoom", (timeToPlayEvent: string) => {
+        setTimeToPlay(timeToPlayEvent);
 
         if (timeToPlay) {
           toast({
@@ -577,7 +577,7 @@ const WinnerModal: React.FC<{
         : (points = gameState.player1.cardPickedSum);
       level = gameState.level;
       console.log(
-        `this is the LOSER ${loserId} and this is the level ${level} with this point ${points}`
+        `this is the looser ${loserId} and this is the level ${level} with this point ${points}`
       );
       navigate(`/loser?loser=${loserId}&level=${level}&points=${points}`);
     }
