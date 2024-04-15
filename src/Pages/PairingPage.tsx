@@ -112,7 +112,7 @@ const PairingPage = ({ socket }) => {
         <Text>
           Please Wait patiently and be here atleast 3 minutes before the game...
         </Text>
-        {time >= 0 ? (
+        {time >= 0 && time <= 1 ? (
           <Box textAlign="center" marginY="1rem" width="fit-content">
             <Button
               color="#fff"
