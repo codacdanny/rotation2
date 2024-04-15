@@ -79,7 +79,6 @@ const PairingPage = ({ socket }) => {
   const handlePlay = () => {
     if (socket && balance >= 200) {
       socket.emit("play", userDetails);
-      console.log(userDetails.userId);
 
       navigate("/game");
     } else {
