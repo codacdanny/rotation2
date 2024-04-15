@@ -133,12 +133,12 @@ const PairingPage = ({ socket }) => {
           </Text>
         ) : (
           <Text textAlign="center" fontWeight="500">
-            Your game with User22a7 begins in{" "}
+            Your game with User22a7 begins by{" "}
             <span
               style={{
                 color: "#06BCC1",
               }}>
-              {time} minutes
+              12:35 pm
             </span>{" "}
           </Text>
         )}
