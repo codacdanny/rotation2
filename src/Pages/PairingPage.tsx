@@ -117,7 +117,7 @@ const PairingPage = ({ socket }) => {
               game...
             </Text>
             {/* && time <= 2  */}
-            {time >= 0 ? (
+            {time >= 0 && time <= 2 ? (
               <Box textAlign="center" marginY="1rem" width="fit-content">
                 <Button
                   color="#fff"
