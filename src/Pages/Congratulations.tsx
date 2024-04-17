@@ -14,11 +14,19 @@ const Congratulations = ({ socket }) => {
   const points = queryParams.get("points");
   console.log(level, winner);
   // const {userDetails} = useUser()
-
-  const handleNextLevel = () => {
+  const handleNextLevel = async () => {
     if (socket) {
-      socket.emit("winner", winner, level);
-      navigate("/game");
+      try {
+        await socket.emit("newPair", winner, level); // Wait for "newPair" to complete
+        await socket.emit("winner", winner, level); // Wait for "winner" to complete
+        navigate("/game");
+      } catch (error) {
+        console.error("Error emitting socket events:", error);
+        // Handle errors appropriately (e.g., display an error message)
+      }
+    } else {
+      // Handle the case where socket is not available
+      return; // Or take other actions
     }
   };
   return (

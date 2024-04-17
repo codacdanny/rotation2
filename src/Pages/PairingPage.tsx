@@ -79,7 +79,7 @@ const PairingPage = ({ socket }) => {
   const handlePlay = () => {
     if (balance) {
       if (socket && balance >= 200) {
-        socket.emit("play", userDetails);
+        socket.emit("play1", userDetails);
 
         navigate("/game");
       } else {
@@ -117,7 +117,7 @@ const PairingPage = ({ socket }) => {
               game...
             </Text>
             {/* && time <= 2  */}
-            {time >= 0 && time <= 2 ? (
+            {time >= 0 ? (
               <Box textAlign="center" marginY="1rem" width="fit-content">
                 <Button
                   color="#fff"
