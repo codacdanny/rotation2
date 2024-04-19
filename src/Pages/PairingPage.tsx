@@ -20,7 +20,7 @@ import User from "../Minor_Components/User";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../Context/UserContext";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const WelcomeSection: React.FC = () => (
   <Flex flexDirection="column" alignItems="center">
@@ -70,6 +70,7 @@ const IconButtonSection: React.FC<{ icon: string; alt: string }> = ({
 );
 
 const PairingPage = ({ socket }) => {
+  const [timer, setTimer] = useState(0);
   const { userDetails } = useUser();
   const navigate = useNavigate();
   const balance = userDetails.rcBalance;
@@ -79,31 +80,31 @@ const PairingPage = ({ socket }) => {
   const time = parseInt(queryParams.get("time"));
   console.log(time);
   const token = localStorage.getItem("token");
-  // let timeRemaining;
+  let timeRemaining: number;
+  const updateTime = async () => {
+    try {
+      const joinWaitRoomResponse = await axios.get<any>(
+        "https://rotation2-backend.onrender.com/api/user/join-wait-list",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  // const updateTime = async () => {
-  //   try {
-  //     const joinWaitRoomResponse = await axios.get<any>(
-  //       "https://rotation2-backend.onrender.com/api/user/join-wait-list",
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
+      let timeRemaining = joinWaitRoomResponse.data.data.timeRemaining.minutes;
+      console.log(timeRemaining);
+      setTimer(timeRemaining);
+    } catch (error) {
+      console.error("Error fetching time:", error);
+    }
+  };
 
-  //     timeRemaining = joinWaitRoomResponse.data.data.timeRemaining.minutes;
-  //     console.log(timeRemaining);
-  //   } catch (error) {
-  //     console.error("Error fetching time:", error);
-  //   }
-  // };
+  useEffect(() => {
+    const intervalId = setInterval(updateTime, 60000); // Update time every minute
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(updateTime, 60000); // Update time every minute
-
-  //   return () => clearInterval(intervalId); // Cleanup on unmount
-  // }, []);
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, []);
   const handlePlay = () => {
     if (balance) {
       if (socket && balance >= 200) {
@@ -172,7 +173,7 @@ const PairingPage = ({ socket }) => {
                   style={{
                     color: "#06BCC1",
                   }}>
-                  {time} minutes
+                  {timer} minutes
                 </span>{" "}
               </Text>
             )}

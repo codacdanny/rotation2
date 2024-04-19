@@ -51,7 +51,6 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
             duration: 9000,
             isClosable: true,
           });
-          navigate(`/pair/?time=${timeRemainingInMins}`);
         } else {
           toast({
             title: "Success",
