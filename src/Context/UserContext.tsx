@@ -70,7 +70,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                   },
                 }
               );
-              console.log((await userDetailsResponse).data.data);
 
               // Make the second API call to fetch account details
               const accountDetailsResponse = axios.get<UserAccountDetails>(

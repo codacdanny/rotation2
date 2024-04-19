@@ -14,19 +14,15 @@ const Congratulations = ({ socket }) => {
   const points = queryParams.get("points");
   console.log(level, winner);
   // const {userDetails} = useUser()
-  const handleNextLevel = async () => {
+  const handleNextLevel = () => {
     if (socket) {
-      try {
-        await socket.emit("newPair", winner, level); // Wait for "newPair" to complete
-        await socket.emit("winner", winner, level); // Wait for "winner" to complete
-        navigate("/game");
-      } catch (error) {
-        console.error("Error emitting socket events:", error);
-        // Handle errors appropriately (e.g., display an error message)
-      }
-    } else {
-      // Handle the case where socket is not available
-      return; // Or take other actions
+      socket.emit("winner", winner, level);
+      navigate("/game");
+    }
+  };
+  const handlePair = () => {
+    if (socket) {
+      socket.emit("pair", winner, level);
     }
   };
   return (
@@ -68,8 +64,8 @@ const Congratulations = ({ socket }) => {
           <Button
             colorScheme="transparent"
             color="#24133F"
-            onClick={() => navigate("/dashboard")}>
-            Go to DashbordPage
+            onClick={handlePair}>
+            Get Paired
           </Button>
           <Button colorScheme="purple" onClick={handleNextLevel}>
             Start Next Level

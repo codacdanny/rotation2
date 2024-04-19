@@ -19,6 +19,8 @@ import notification from "../assets/notification-bing.svg";
 import User from "../Minor_Components/User";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../Context/UserContext";
+import axios from "axios";
+import { useEffect } from "react";
 
 const WelcomeSection: React.FC = () => (
   <Flex flexDirection="column" alignItems="center">
@@ -76,6 +78,32 @@ const PairingPage = ({ socket }) => {
   const queryParams = new URLSearchParams(location.search);
   const time = parseInt(queryParams.get("time"));
   console.log(time);
+  const token = localStorage.getItem("token");
+  // let timeRemaining;
+
+  // const updateTime = async () => {
+  //   try {
+  //     const joinWaitRoomResponse = await axios.get<any>(
+  //       "https://rotation2-backend.onrender.com/api/user/join-wait-list",
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     timeRemaining = joinWaitRoomResponse.data.data.timeRemaining.minutes;
+  //     console.log(timeRemaining);
+  //   } catch (error) {
+  //     console.error("Error fetching time:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(updateTime, 60000); // Update time every minute
+
+  //   return () => clearInterval(intervalId); // Cleanup on unmount
+  // }, []);
   const handlePlay = () => {
     if (balance) {
       if (socket && balance >= 200) {

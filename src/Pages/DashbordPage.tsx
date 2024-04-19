@@ -25,7 +25,7 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
   const { userDetails } = useUser();
   const handleJoinWaitList = async () => {
     const token = localStorage.getItem("token");
-    const balance = userDetails.rcBalance;
+    const balance = userDetails?.rcBalance;
     if (token && balance >= 200) {
       let timeRemainingInMins: number;
       try {
@@ -38,18 +38,32 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
             },
           }
         );
-        console.log(joinWaitRoomResponse.data.data.timeRemaining);
 
-        toast({
-          title: "Success",
-          description: "You have been added to the waitlist",
-          status: "success",
-          position: "top-right",
-          duration: 9000,
-          isClosable: true,
-        });
         timeRemainingInMins =
           joinWaitRoomResponse.data.data.timeRemaining.minutes;
+
+        if (joinWaitRoomResponse.data.msg === "Added to waitlist already.") {
+          toast({
+            title: "Warning",
+            description: "You are already in the waitlist",
+            status: "warning",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+          });
+          navigate(`/pair/?time=${timeRemainingInMins}`);
+        } else {
+          toast({
+            title: "Success",
+            description: "You have been added to the waitlist",
+            status: "success",
+            position: "top-right",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+        console.log(joinWaitRoomResponse.data.data.timeRemaining);
+
         navigate(`/pair/?time=${timeRemainingInMins}`);
       } catch (error) {
         setLoading(false);
@@ -63,16 +77,16 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
             isClosable: true,
           });
         }
-        if (error.response?.data.msg === "Added to waitlist already.") {
+
+        if (error.response?.data.msg === "Not assigned to a room.") {
           toast({
             title: "Warning",
-            description: "You are already in the waitlist",
+            description: "Please Try Again",
             status: "warning",
             position: "top-right",
             duration: 9000,
             isClosable: true,
           });
-          navigate(`/pair/?time=${timeRemainingInMins}`);
         }
       }
     } else {

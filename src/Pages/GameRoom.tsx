@@ -124,7 +124,6 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
       socket.on("connect", () => {
         console.log("Connected to server");
       });
-
       socket.on("room", (roomId: string, gameState: GameState) => {
         setRoomId(roomId);
         setGameState(gameState);
@@ -135,7 +134,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
 
         setUser1Phone(gameState?.player1.phoneNumber);
 
-        console.log(`this is the room id ${gameState}`);
+        console.log(`this is the room id ${roomId}`);
       });
       socket.on("fullGameRoom", (timeToPlayEvent: string) => {
         setTimeToPlay(timeToPlayEvent);
@@ -175,7 +174,6 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
           );
 
           setShuffledCards(newShuffledList);
-          console.log(gameRoomState);
 
           setGameState(gameRoomState);
 
