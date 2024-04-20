@@ -70,17 +70,20 @@ const IconButtonSection: React.FC<{ icon: string; alt: string }> = ({
 );
 
 const PairingPage = ({ socket }) => {
-  const [timer, setTimer] = useState(0);
+  const [minutesTimer, setMinutesTimer] = useState<number>();
+  const [hourTimer, setHourTimer] = useState<number>();
   const { userDetails } = useUser();
   const navigate = useNavigate();
   const balance = userDetails.rcBalance;
   const toast = useToast();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const time = parseInt(queryParams.get("time"));
-  console.log(time);
+  const minutes = parseInt(queryParams.get("minutes"));
+  const hour = parseInt(queryParams.get("hour"));
   const token = localStorage.getItem("token");
-  let timeRemaining: number;
+  let minutesTimeRemaining = minutes;
+  let hourTimeRemaining = hour;
+
   const updateTime = async () => {
     try {
       const joinWaitRoomResponse = await axios.get<any>(
@@ -92,16 +95,18 @@ const PairingPage = ({ socket }) => {
         }
       );
 
-      let timeRemaining = joinWaitRoomResponse.data.data.timeRemaining.minutes;
-      console.log(timeRemaining);
-      setTimer(timeRemaining);
+      minutesTimeRemaining =
+        joinWaitRoomResponse.data.data.timeRemaining.minutes;
+      setMinutesTimer(minutesTimeRemaining);
+      hourTimeRemaining = joinWaitRoomResponse.data.data.timeRemaining.hours;
+      setHourTimer(hourTimeRemaining);
     } catch (error) {
       console.error("Error fetching time:", error);
     }
   };
 
   useEffect(() => {
-    const intervalId = setInterval(updateTime, 60000); // Update time every minute
+    const intervalId = setInterval(updateTime, 20000); // Update time every minute
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
@@ -126,71 +131,143 @@ const PairingPage = ({ socket }) => {
   return (
     <>
       {balance && (
-        <Box
-          paddingY="2rem"
-          paddingX="1rem"
-          minHeight="100svh"
-          bgGradient="linear-gradient(180deg, #E1D7F2 0%, rgba(107, 57, 189, 0.20) 53.96%, rgba(225, 215, 242, 0.00) 100%)">
-          <WelcomeSection />
-          <Flex justifyContent="center" marginY="2rem">
-            <CircularProgressSection />
-          </Flex>
-          <Flex gap=".5rem" alignItems="center" justifyContent="center">
-            <User />
-            <BsArrowRight size="30px" />
-            <User />
-          </Flex>
-          <VStack gap="2rem" marginY="2rem">
-            <Text>
-              Please Wait patiently and be here atleast 3 minutes before the
-              game...
-            </Text>
-            {/* && time <= 2  */}
-            {time >= 0 ? (
-              <Box textAlign="center" marginY="1rem" width="fit-content">
-                <Button
-                  color="#fff"
-                  bgColor="#24133F"
-                  width="100%"
-                  className="pulse circle orange"
-                  colorScheme="violet"
-                  onClick={handlePlay}>
-                  Play Game
-                </Button>
-              </Box>
-            ) : (
-              <></>
-            )}
+        <>
+          {hourTimer ? (
+            <Box
+              paddingY="2rem"
+              paddingX="1rem"
+              minHeight="100svh"
+              bgGradient="linear-gradient(180deg, #E1D7F2 0%, rgba(107, 57, 189, 0.20) 53.96%, rgba(225, 215, 242, 0.00) 100%)">
+              <WelcomeSection />
+              <Flex justifyContent="center" marginY="2rem">
+                <CircularProgressSection />
+              </Flex>
+              <Flex gap=".5rem" alignItems="center" justifyContent="center">
+                <User />
+                <BsArrowRight size="30px" />
+                <User />
+              </Flex>
+              <VStack gap="2rem" marginY="2rem">
+                <Text>
+                  Please Wait patiently and be here atleast 3 minutes before the
+                  game...
+                </Text>
 
-            {time > 720 ? (
-              <Text textAlign="center" fontWeight="500">
-                You Missed The Game , Join Next Time
-              </Text>
-            ) : (
-              <Text textAlign="center" fontWeight="500">
-                Your game with User22a7 begins in{" "}
-                <span
-                  style={{
-                    color: "#06BCC1",
-                  }}>
-                  {timer} minutes
-                </span>{" "}
-              </Text>
-            )}
+                {hourTimer === 19 && minutesTimer >= 0 && minutesTimer < 50 ? (
+                  <Box textAlign="center" marginY="1rem" width="fit-content">
+                    <Button
+                      color="#fff"
+                      bgColor="#24133F"
+                      width="100%"
+                      className="pulse circle orange"
+                      colorScheme="violet"
+                      onClick={handlePlay}>
+                      Play Game
+                    </Button>
+                  </Box>
+                ) : (
+                  <></>
+                )}
 
-            <Text textAlign="center" fontWeight="600" fontSize=".8rem">
-              The Play button appears 20 seconds before the game. so you can
-              click and join a room <br />
-              Also put your device in Landscape mode to get a good feel of the
-              game room
-            </Text>
-            <Text textAlign="center" fontWeight="300" fontSize=".8rem">
-              Do kindly note that any player who fails to start the game at the
-              end of the timer loses the game.
-            </Text>
-          </VStack>
-          <FlexSection />
-        </Box>
+                {hourTimer >= 22 ? (
+                  <Text textAlign="center" fontWeight="500">
+                    You Missed The Game , Join Next Time
+                  </Text>
+                ) : (
+                  <Text textAlign="center" fontWeight="500">
+                    Your game starts in{" "}
+                    <span
+                      style={{
+                        color: "#06BCC1",
+                      }}>
+                      {hourTimer} hours : {minutesTimer} minutes
+                    </span>{" "}
+                  </Text>
+                )}
+
+                <Text textAlign="center" fontWeight="600" fontSize=".8rem">
+                  The Play button appears 20 seconds before the game. so you can
+                  click and join a room <br />
+                  Also put your device in Landscape mode to get a good feel of
+                  the game room
+                </Text>
+                <Text textAlign="center" fontWeight="300" fontSize=".8rem">
+                  Do kindly note that any player who fails to start the game at
+                  the end of the timer loses the game.
+                </Text>
+              </VStack>
+              <FlexSection />
+            </Box>
+          ) : (
+            <Box
+              paddingY="2rem"
+              paddingX="1rem"
+              minHeight="100svh"
+              bgGradient="linear-gradient(180deg, #E1D7F2 0%, rgba(107, 57, 189, 0.20) 53.96%, rgba(225, 215, 242, 0.00) 100%)">
+              <WelcomeSection />
+              <Flex justifyContent="center" marginY="2rem">
+                <CircularProgressSection />
+              </Flex>
+              <Flex gap=".5rem" alignItems="center" justifyContent="center">
+                <User />
+                <BsArrowRight size="30px" />
+                <User />
+              </Flex>
+              <VStack gap="2rem" marginY="2rem">
+                <Text>
+                  Please Wait patiently and be here atleast 3 minutes before the
+                  game...
+                </Text>
+
+                {hourTimeRemaining === 0 &&
+                minutesTimeRemaining >= 0 &&
+                minutesTimeRemaining < 2 ? (
+                  <Box textAlign="center" marginY="1rem" width="fit-content">
+                    <Button
+                      color="#fff"
+                      bgColor="#24133F"
+                      width="100%"
+                      className="pulse circle orange"
+                      colorScheme="violet"
+                      onClick={handlePlay}>
+                      Play Game
+                    </Button>
+                  </Box>
+                ) : (
+                  <></>
+                )}
+
+                {hourTimeRemaining >= 22 ? (
+                  <Text textAlign="center" fontWeight="500">
+                    You Missed The Game , Join Next Time
+                  </Text>
+                ) : (
+                  <Text textAlign="center" fontWeight="500">
+                    Your game starts in{" "}
+                    <span
+                      style={{
+                        color: "#06BCC1",
+                      }}>
+                      {hourTimeRemaining} hours : {minutesTimeRemaining} minutes
+                    </span>{" "}
+                  </Text>
+                )}
+
+                <Text textAlign="center" fontWeight="600" fontSize=".8rem">
+                  The Play button appears 20 seconds before the game. so you can
+                  click and join a room <br />
+                  Also put your device in Landscape mode to get a good feel of
+                  the game room
+                </Text>
+                <Text textAlign="center" fontWeight="300" fontSize=".8rem">
+                  Do kindly note that any player who fails to start the game at
+                  the end of the timer loses the game.
+                </Text>
+              </VStack>
+              <FlexSection />
+            </Box>
+          )}
+        </>
       )}
     </>
   );

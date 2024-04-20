@@ -28,6 +28,7 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
     const balance = userDetails?.rcBalance;
     if (token && balance >= 200) {
       let timeRemainingInMins: number;
+      let timeRemainingInHours: number;
       try {
         setLoading(true);
         const joinWaitRoomResponse = await axios.get<any>(
@@ -38,7 +39,8 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
             },
           }
         );
-
+        timeRemainingInHours =
+          joinWaitRoomResponse.data.data.timeRemaining.hours;
         timeRemainingInMins =
           joinWaitRoomResponse.data.data.timeRemaining.minutes;
 
@@ -63,7 +65,9 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
         }
         console.log(joinWaitRoomResponse.data.data.timeRemaining);
 
-        navigate(`/pair/?time=${timeRemainingInMins}`);
+        navigate(
+          `/pair/?minutes=${timeRemainingInMins}&hour=${timeRemainingInHours}`
+        );
       } catch (error) {
         setLoading(false);
         if (error.response?.data.msg === "Insufficient RC balance.") {
