@@ -109,12 +109,12 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
       <DebitCard />
       <Box textAlign="center" marginY="1rem" width="100%">
         <Button
+          colorScheme="transparent"
           isLoading={loading}
           color="#fff"
           bgColor="#24133F"
           width="100%"
           className="pulse circle orange"
-          colorScheme="violet"
           onClick={handleJoinWaitList}>
           Join Waiting Room{" "}
         </Button>

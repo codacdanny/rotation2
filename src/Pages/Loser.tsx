@@ -25,7 +25,7 @@ const Loser = ({ socket }) => {
         flexDirection="column"
         alignItems="center"
         gap="3rem">
-        <Box>
+        <Box textAlign="center">
           <Heading my="2rem" color="#24133F">
             Sorry You lost
           </Heading>
