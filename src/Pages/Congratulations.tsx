@@ -14,17 +14,23 @@ const Congratulations = ({ socket }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const winner = queryParams.get("winner");
-  const level = queryParams.get("level");
+  const level = parseInt(queryParams.get("level"));
   const points = queryParams.get("points");
   const token = localStorage.getItem("token");
   console.log(level, winner);
   // const {userDetails} = useUser()
 
+  const calculateCashout = (level) => {
+    // Cashout starts from 200 RC and doubles each level, up to level 15
+    return Math.pow(2, level - 1) * 100;
+  };
+
   const handleCashOut = async () => {
     try {
+      const winning = calculateCashout(level);
       await axios.post(
         "https://rotation2-backend.onrender.com/api/user/cashout",
-        1000,
+        { winning: winning },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -99,19 +105,24 @@ const Congratulations = ({ socket }) => {
             Start Next Level
           </Button>
         </Flex>
-        <></>
-        <Button
-          onClick={handleCashOut}
-          marginY="3rem"
-          padding="2rem 4rem"
-          color="white"
-          fontWeight={600}
-          fontSize="1.2rem"
-          colorScheme="purple"
-          className="pulse circle orange"
-          bgGradient="linear-gradient(to right, #6B39BD, #24133F, #5D32A5)">
-          Cashout {"400 RC"}
-        </Button>
+        <>
+          {level >= 2 ? (
+            <Button
+              onClick={handleCashOut}
+              marginY="3rem"
+              padding="2rem 4rem"
+              color="white"
+              fontWeight={600}
+              fontSize="1.2rem"
+              colorScheme="purple"
+              className="pulse circle orange"
+              bgGradient="linear-gradient(to right, #6B39BD, #24133F, #5D32A5)">
+              Cashout {calculateCashout(level)} RC
+            </Button>
+          ) : (
+            <></>
+          )}
+        </>
       </Box>
     </Page_Backround>
   );
