@@ -153,7 +153,7 @@ const PairingPage = ({ socket }) => {
                   game...
                 </Text>
 
-                {hourTimer === 5 && minutesTimer >= 58 && minutesTimer <= 59 ? (
+                {hourTimer === 0 && minutesTimer >= 0 && minutesTimer <= 2 ? (
                   <Box textAlign="center" marginY="1rem" width="fit-content">
                     <Button
                       color="#fff"
