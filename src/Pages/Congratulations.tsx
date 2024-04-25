@@ -47,6 +47,14 @@ const Congratulations = ({ socket }) => {
         }
       );
       navigate("/dashboard");
+      toast({
+        title: "Congratulations",
+        description: "Your Cashout has been added",
+        status: "success",
+        position: "top-right",
+        duration: 9000,
+        isClosable: true,
+      });
     } catch (error) {
       console.log(error);
     }

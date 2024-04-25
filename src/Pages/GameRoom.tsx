@@ -145,7 +145,7 @@ const GameRoom: React.FC<GameRoomProps> = ({ socket }) => {
             description: "You can now Pick a card",
             status: "success",
             position: "bottom",
-            duration: 9000,
+            duration: 2000,
             isClosable: true,
           });
         }
