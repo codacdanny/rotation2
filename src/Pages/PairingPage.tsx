@@ -106,7 +106,7 @@ const PairingPage = ({ socket }) => {
   };
 
   useEffect(() => {
-    const intervalId = setInterval(updateTime, 20000); // Update time every minute
+    const intervalId = setInterval(updateTime, 10000); // Update time every minute
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);

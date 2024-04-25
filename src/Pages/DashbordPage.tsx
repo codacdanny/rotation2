@@ -95,7 +95,7 @@ const DashbordPage: React.FC<DashBoardPageProps> = ({ socket }) => {
     } else {
       toast({
         title: "Error",
-        description: "Insufficient RC balance",
+        description: "An Error Ocurred, try again",
         status: "error",
         position: "top-right",
         duration: 9000,

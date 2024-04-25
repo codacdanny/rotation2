@@ -1,4 +1,12 @@
-import { Box, Button, Flex, Heading, Image, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Image,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import Page_Backround from "../Major_Components/Page_Background";
 import profile from "../assets/profileImage.svg";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +19,7 @@ const Congratulations = ({ socket }) => {
   const [disablePair, setDisablePair] = useState<boolean>(false);
   const [enableNext, setEnableNext] = useState<boolean>(true);
   const navigate = useNavigate();
+  const toast = useToast();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const winner = queryParams.get("winner");
@@ -51,9 +60,22 @@ const Congratulations = ({ socket }) => {
   const handlePair = () => {
     if (socket) {
       socket.emit("pair", winner, level);
+
+      setDisablePair(!disablePair);
+      setEnableNext(!enableNext);
     }
-    setDisablePair(!disablePair);
-    setEnableNext(!enableNext);
+    socket.on("pairingError", () => {
+      setDisablePair(false);
+      setEnableNext(true);
+      toast({
+        title: "Error Pairing",
+        description: "Please Click Get Paired again.",
+        status: "error",
+        position: "bottom",
+        duration: 9000,
+        isClosable: true,
+      });
+    });
   };
   return (
     <Page_Backround>
