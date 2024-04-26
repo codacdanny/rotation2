@@ -582,7 +582,7 @@ const WinnerModal: React.FC<{
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>THE END!!!</ModalHeader>
