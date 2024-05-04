@@ -97,8 +97,8 @@ const Signup: React.FC = () => {
     e.preventDefault();
 
     if (
-      formData.referralID !== "dualmainRC" &&
-      formData.referralID !== "monomainRC"
+      formData.referralID !== "dual424R2" &&
+      formData.referralID !== "mono424R2"
     ) {
       toast({
         title: "Error",
