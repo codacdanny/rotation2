@@ -219,7 +219,7 @@ const PairingPage = ({ socket }) => {
                   game...
                 </Text>
 
-                {/* {hourTimeRemaining === 0 &&
+                {hourTimeRemaining === 0 &&
                 minutesTimeRemaining >= 0 &&
                 minutesTimeRemaining < 2 ? (
                   <Box textAlign="center" marginY="1rem" width="fit-content">
@@ -235,19 +235,9 @@ const PairingPage = ({ socket }) => {
                   </Box>
                 ) : (
                   <></>
-                )} */}
-                <Box textAlign="center" marginY="1rem" width="fit-content">
-                  <Button
-                    color="#fff"
-                    bgColor="#24133F"
-                    width="100%"
-                    className="pulse circle orange"
-                    colorScheme="violet"
-                    onClick={handlePlay}>
-                    Play Game
-                  </Button>
-                </Box>
-                {/* {hourTimeRemaining >= 22 ? (
+                )}
+
+                {hourTimeRemaining >= 22 ? (
                   <Text textAlign="center" fontWeight="500">
                     You Missed The Game , Join Next Time
                   </Text>
@@ -261,7 +251,7 @@ const PairingPage = ({ socket }) => {
                       {hourTimeRemaining} hours : {minutesTimeRemaining} minutes
                     </span>{" "}
                   </Text>
-                )} */}
+                )}
 
                 <Text textAlign="center" fontWeight="600" fontSize=".8rem">
                   The Play button appears 20 seconds before the game. so you can
